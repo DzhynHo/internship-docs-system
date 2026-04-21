@@ -1,4 +1,4 @@
-# Requirements Specification
+# Specyfikacja wymagań
 
 ## 1. Wprowadzenie
 
