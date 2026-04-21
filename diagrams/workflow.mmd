@@ -1,43 +1,61 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#1f2937",
+    "primaryTextColor": "#ffffff",
+    "primaryBorderColor": "#4b5563",
+    "lineColor": "#9ca3af",
+    "secondaryColor": "#111827",
+    "tertiaryColor": "#374151"
+  }
+}}%%
+
 sequenceDiagram
     autonumber
+
     actor S as Student
     actor O as Opiekun (Uczel./Zakład.)
     participant Sys as System (Baza/PDF)
     actor Sek as Sekretariat/Dyrekcja
     participant Inst as Instytucja (Prezes)
 
-
     Note over S, Inst: Faza Inicjacji (Załączniki 1, 2, 2a, 9)
+
     Inst->>Sys: Z9: Oświadczenie o przyjęciu
     S->>Sys: Wypełnia Z1 (Porozumienie), Z2 i Z2a (Program/Harmonogram)
     Sys->>O: Powiadomienie o nowych dokumentach
     O->>Sys: Weryfikacja / Możliwa korekta błędów Studenta
+
     alt Dokumenty wymagają poprawy
         O-->>S: Informacja o błędach (Uwagi w sekcjach)
     else Dokumenty poprawne
         O->>Sys: Akceptacja wstępna
     end
 
-
     Note over S, O: Faza Realizacji (Załącznik 6 - Dziennik)
+
     loop Każdy dzień praktyk
         S->>Sys: Z6: Wpis do dynamicznej tabeli
     end
+
     O->>Sys: Kontrola bieżąca i ewentualna naprawa wpisów
 
-
     Note over S, Sek: Faza Rozliczenia (Załączniki 3, 4, 7, 8)
+
     S->>Sys: Z7: Sprawozdanie (Limit: 1 zdanie na efekt)
     S->>Sys: Z4: Potwierdzenie efektów uczenia się
     S->>Sys: Przesłanie kompletu (Z2a-Z7)
+
     Note right of S: SYSTEM BLOKUJE EDYCJĘ DLA STUDENTA
-   
+
     O->>Sys: Z4a: Merytoryczna ocena wniosku
     O->>Sys: Z8: Protokół egzaminu (Wystawienie oceny)
-   
+
     Sys->>Sek: Powiadomienie o komplecie dokumentów (Oryginały PDF)
     Sek->>Sys: Weryfikacja formalna i zatwierdzenie w Dziekanacie
-   
+
     Note over S, Sek: Wynik końcowy
+
     Sys-->>S: Udostępnienie Z8 (Protokół) - Widok tylko własny
+
     Note over Sys: Z5 (Ankieta) - Oczekuje na wdrożenie
