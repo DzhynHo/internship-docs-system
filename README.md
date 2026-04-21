@@ -1,5 +1,7 @@
 # ePraktyki – System zarządzania dokumentacją praktyk
 
+Projekt opracowany przez **Valeriia Khylchenko**   
+
 ##  Opis projektu
 
 ePraktyki to system koncepcyjny do zarządzania dokumentacją praktyk studenckich.
