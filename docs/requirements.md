@@ -28,10 +28,13 @@ System umożliwia studentowi wypełnianie dziennika praktyk (załącznik 6) w fo
 
 ---
 
-### F03 – Korekta przez opiekuna
+### F03 – Weryfikacja przez opiekuna
 
 **Opis:**
-Opiekun ma możliwość edytowania i poprawiania wpisów studenta w celu usprawnienia procesu weryfikacji.
+Opiekun ma możliwość przeglądania dokumentów studenta oraz zgłaszania uwag i błędów.
+W przypadku wykrycia nieprawidłowości dokumenty są odsyłane do studenta w celu wprowadzenia poprawek.
+
+Opiekun nie edytuje bezpośrednio danych studenta.
 
 **Priorytet:** Should Have
 
