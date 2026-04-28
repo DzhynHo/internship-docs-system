@@ -40,6 +40,6 @@ Do modelowania przepływów danych i dokumentowania logiki biznesowej wybrano na
 ### Wizualizacja przepływu (Workflow)
 Szczegółowy diagram przepływu danych, opisujący kroki od Inicjacji do Wyniku końcowego, został opracowany w formacie Mermaid i znajduje się w głównym katalogu dokumentacji:
 
-👉 **[ZOBACZ DIAGRAM WORKFLOW](./diagrams/workflow.mmd)**
+👉 **[ZOBACZ DIAGRAM WORKFLOW](../diagrams/workflow.mmd)**
 
 Diagram ten służy jako podstawa do implementacji logiki blokowania edycji rekordów przez System po przesłaniu kompletu dokumentów przez Studenta.
