@@ -101,3 +101,30 @@ CREATE TABLE nadzor (
     FOREIGN KEY (student_id) REFERENCES uzytkownicy(uzytkownik_id),
     FOREIGN KEY (opiekun_id) REFERENCES uzytkownicy(uzytkownik_id)
 );
+
+-- Słownik 13 efektów kształcenia
+CREATE TABLE efekty_ksztalcenia (
+    efekt_id INT PRIMARY KEY,
+    kod VARCHAR(10) NOT NULL UNIQUE, -- np. EK_01, EK_02
+    opis TEXT NOT NULL
+);
+
+-- Tabela łącząca efekty z konkretnym formularzem (Zadanie: formularz ma 13 efektów)
+CREATE TABLE efekty_formularza (
+    formularz_id INT NOT NULL,
+    efekt_id INT NOT NULL,
+    PRIMARY KEY (formularz_id, efekt_id),
+    FOREIGN KEY (formularz_id) REFERENCES praktyki(praktyka_id),
+    FOREIGN KEY (efekt_id) REFERENCES efekty_ksztalcenia(efekt_id)
+);
+
+-- Szczegółowy harmonogram (Zadanie: suma dni = 120)
+CREATE TABLE harmonogram_praktyki (
+    harmonogram_id INT PRIMARY KEY,
+    praktyka_id INT NOT NULL,
+    data_rozpoczecia DATE NOT NULL,
+    data_zakonczenia DATE NOT NULL,
+    liczba_dni_roboczych INT NOT NULL, -- Tu suma musi wynieść 120
+    zadania TEXT NOT NULL,
+    FOREIGN KEY (praktyka_id) REFERENCES praktyki(praktyka_id)
+);
