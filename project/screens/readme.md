@@ -1,4 +1,3 @@
-
 # System Obsługi Praktyk – ANS Elbląg
 
 Aplikacja webowa do zarządzania praktykami zawodowymi studentów Akademii Nauk Stosowanych w Elblągu.
@@ -9,7 +8,7 @@ Aplikacja webowa do zarządzania praktykami zawodowymi studentów Akademii Nauk 
 
 ### 1. Strona logowania
 
-![Login](project/screens/login.png)
+![Strona logowania](login.png)
 
 Ekran powitalny systemu. Logowanie odbywa się wyłącznie przez konto uczelniane Microsoft (`@student.ans-elblag.pl`). Brak tradycyjnego formularza login/hasło – uwierzytelnianie delegowane do Microsoft Entra ID (Azure AD).
 
@@ -17,7 +16,7 @@ Ekran powitalny systemu. Logowanie odbywa się wyłącznie przez konto uczelnian
 
 ### 2. Dashboard użytkownika
 
-![Dashboard](screens/dashboard.png)
+![Dashboard](dashboard.png)
 
 Po zalogowaniu użytkownik trafia na swój dashboard. Widoczne są:
 
@@ -29,7 +28,7 @@ Po zalogowaniu użytkownik trafia na swój dashboard. Widoczne są:
 
 ### 3. Panel admina – Zarządzanie użytkownikami
 
-![Zarządzanie użytkownikami](screens/admin_users.png)
+![Zarządzanie użytkownikami](admin_users.png)
 
 Tabela wszystkich kont w systemie z możliwością:
 
@@ -40,6 +39,9 @@ Tabela wszystkich kont w systemie z możliwością:
 - eksportu całej listy do CSV.
 
 Statystyki na górze strony pokazują liczbę studentów, pracowników i administratorów w czasie rzeczywistym.
+
+---
+
 
 
 © 2026 Akademia Nauk Stosowanych w Elblągu
