@@ -9,7 +9,7 @@ Aplikacja webowa do zarządzania praktykami zawodowymi studentów Akademii Nauk 
 
 ### 1. Strona logowania
 
-![Strona logowania](screens/login.png)
+![Login](project/login.png)
 
 Ekran powitalny systemu. Logowanie odbywa się wyłącznie przez konto uczelniane Microsoft (`@student.ans-elblag.pl`). Brak tradycyjnego formularza login/hasło – uwierzytelnianie delegowane do Microsoft Entra ID (Azure AD).
 
