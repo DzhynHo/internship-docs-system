@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, request, session, url_for
+﻿from flask import Blueprint, redirect, request, session, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models.user import User
@@ -311,6 +311,20 @@ def login():
     error_html = f'<div class="login-error">{login_error}</div>' if login_error else ''
     prefill_email = request.form.get('email', '') if login_error else ''
 
+    if auth_url:
+        ms_button_html = (
+            '<a href="' + auth_url + '" class="btn-microsoft">'
+            '<svg viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            '<rect x="1" y="1" width="9" height="9" fill="#f25022"/>'
+            '<rect x="11" y="1" width="9" height="9" fill="#7fba00"/>'
+            '<rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>'
+            '<rect x="11" y="11" width="9" height="9" fill="#ffb900"/>'
+            '</svg>Zaloguj przez Microsoft</a>'
+            '<div class="login-divider"><span>lub zaloguj sie lokalnie</span></div>'
+        )
+    else:
+        ms_button_html = ''
+
     content = f"""
 <div class="login-wrap">
   <div class="login-card">
@@ -320,18 +334,7 @@ def login():
     <p>Akademia Nauk Stosowanych w Elblągu</p>
 
     <!-- Microsoft -->
-    <a href="{auth_url}" class="btn-microsoft">
-      <svg viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1"  y="1"  width="9" height="9" fill="#f25022"/>
-        <rect x="11" y="1"  width="9" height="9" fill="#7fba00"/>
-        <rect x="1"  y="11" width="9" height="9" fill="#00a4ef"/>
-        <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
-      </svg>
-      Zaloguj przez Microsoft
-    </a>
-
-    <!-- Divider -->
-    <div class="login-divider"><span>lub zaloguj się lokalnie</span></div>
+    {ms_button_html}
 
     <!-- Local login form -->
     {error_html}
@@ -612,6 +615,20 @@ def dashboard():
   </div>
 </div>"""
 
+    if auth_url:
+        ms_button_html = (
+            '<a href="' + auth_url + '" class="btn-microsoft">'
+            '<svg viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            '<rect x="1" y="1" width="9" height="9" fill="#f25022"/>'
+            '<rect x="11" y="1" width="9" height="9" fill="#7fba00"/>'
+            '<rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>'
+            '<rect x="11" y="11" width="9" height="9" fill="#ffb900"/>'
+            '</svg>Zaloguj przez Microsoft</a>'
+            '<div class="login-divider"><span>lub zaloguj sie lokalnie</span></div>'
+        )
+    else:
+        ms_button_html = ''
+
     content = f"""
 <div class="ans-container" style="padding-top:28px;">
   <div class="welcome-banner">
@@ -871,6 +888,20 @@ def regulamin():
         f'color:#3b5bdb;text-decoration:none;">{label}</a></li>'
         for anchor, label in _TOC_ITEMS
     )
+
+    if auth_url:
+        ms_button_html = (
+            '<a href="' + auth_url + '" class="btn-microsoft">'
+            '<svg viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            '<rect x="1" y="1" width="9" height="9" fill="#f25022"/>'
+            '<rect x="11" y="1" width="9" height="9" fill="#7fba00"/>'
+            '<rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>'
+            '<rect x="11" y="11" width="9" height="9" fill="#ffb900"/>'
+            '</svg>Zaloguj przez Microsoft</a>'
+            '<div class="login-divider"><span>lub zaloguj sie lokalnie</span></div>'
+        )
+    else:
+        ms_button_html = ''
 
     content = f"""
 <div class="page-header">
