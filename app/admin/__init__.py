@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, send_file, abort, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, send_file, request, redirect, url_for, flash
 from flask_login import login_required
 from app.auth.decorators import role_required
 from app import db
 from app.models.user import User
 from app.models import DocumentSubmission
 from app.forms import AdminCreateUserForm, AssignRoleForm
-import io, zipfile, os
+import io, zipfile
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -26,17 +26,42 @@ def users_list():
 @login_required
 @role_required('administrator', 'admin', 'dziekanat', 'sekretariat', 'dyrekcja')
 def export_user_files(user_id):
+    import json
+    from app.models import Attachment
+
+    user = User.query.get_or_404(user_id)
     subs = DocumentSubmission.query.filter_by(user_id=user_id).all()
+    att_names = {a.id: a.name for a in Attachment.query.all()}
+
     mem = io.BytesIO()
-    with zipfile.ZipFile(mem, mode='w') as z:
+    count = 0
+    with zipfile.ZipFile(mem, mode='w', compression=zipfile.ZIP_DEFLATED) as z:
         for s in subs:
-            if s.file_path and os.path.exists(s.file_path):
-                arcname = os.path.basename(s.file_path)
-                z.write(s.file_path, arcname=arcname)
+            if s.attachment_id is None:
+                continue
+            att_name = att_names.get(s.attachment_id, f'dokument_{s.id}')
+            safe_name = att_name.replace('/', '-').replace('\\', '-')[:60]
+            filename = f'{s.id:03d}_{safe_name}_{s.status}.json'
+
+            content = {
+                'zalacznik': att_name,
+                'status': s.status,
+                'data_wyslania': s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else None,
+                'data_zmiany': s.updated_at.strftime('%Y-%m-%d %H:%M') if s.updated_at else None,
+                'komentarz': s.comments,
+                'dane': s.data or {},
+            }
+            z.writestr(filename, json.dumps(content, ensure_ascii=False, indent=2))
+            count += 1
+
     mem.seek(0)
-    if mem.getbuffer().nbytes == 0:
-        abort(404)
-    return send_file(mem, mimetype='application/zip', as_attachment=True, download_name=f'user_{user_id}_documents.zip')
+    if count == 0:
+        flash('Ten użytkownik nie ma żadnych dokumentów do eksportu.', 'warning')
+        return redirect(request.referrer or url_for('admin.users_list'))
+
+    safe_email = (user.email or f'user_{user_id}').replace('@', '_').replace('.', '_')
+    return send_file(mem, mimetype='application/zip', as_attachment=True,
+                     download_name=f'dokumenty_{safe_email}.zip')
 
 @admin_bp.route('/users/create', methods=['GET', 'POST'])
 @login_required
