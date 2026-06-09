@@ -302,11 +302,11 @@ def login():
                 return redirect(url_for('auth.dashboard'))
 
     auth_url, flow = get_auth_url()
-    flow_id = uuid.uuid4().hex
-    FLOWS[flow_id] = flow
-    session["flow_id"] = flow_id
-    session.modified = True
-    print("[auth.login] stored flow in session; keys=", getattr(flow, 'keys', lambda: 'n/a')())
+    if flow is not None:
+        flow_id = uuid.uuid4().hex
+        FLOWS[flow_id] = flow
+        session["flow_id"] = flow_id
+        session.modified = True
 
     error_html = f'<div class="login-error">{login_error}</div>' if login_error else ''
     prefill_email = request.form.get('email', '') if login_error else ''

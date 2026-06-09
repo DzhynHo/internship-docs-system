@@ -4,6 +4,15 @@ from flask import current_app
 AUTHORITY = "https://login.microsoftonline.com/{}"
 SCOPE = ["User.Read"]
 
+def microsoft_configured():
+    cfg = current_app.config
+    return all([
+        cfg.get("MICROSOFT_CLIENT_ID"),
+        cfg.get("MICROSOFT_CLIENT_SECRET"),
+        cfg.get("MICROSOFT_TENANT_ID"),
+        cfg.get("MICROSOFT_REDIRECT_URI"),
+    ])
+
 def _build_msal_app():
     cfg = current_app.config
     return msal.ConfidentialClientApplication(
@@ -13,6 +22,8 @@ def _build_msal_app():
     )
 
 def get_auth_url():
+    if not microsoft_configured():
+        return None, None
     flow = _build_msal_app().initiate_auth_code_flow(
         SCOPE,
         redirect_uri=current_app.config["MICROSOFT_REDIRECT_URI"],
@@ -27,6 +38,8 @@ def get_auth_url():
         auth_uri = f"{auth_uri}{sep}response_mode=query"
         flow["auth_uri"] = auth_uri
 
+    if flow is None:
+        return None, None
     return flow["auth_uri"], flow
 
 def get_token_from_code(auth_response, flow):
