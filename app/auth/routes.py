@@ -531,13 +531,6 @@ def dashboard():
         <strong>Zarządzaj użytkownikami</strong>
         <span>Lista, role, eksport plików</span>
       </div>
-    </a>
-    <a href="/student/export-files" class="action-link">
-      <span class="action-link-icon">📦</span>
-      <div class="action-link-text">
-        <strong>Eksportuj moje pliki</strong>
-        <span>Pobierz dokumenty jako ZIP</span>
-      </div>
     </a>"""
         panel_title = "Akcje administracyjne"
     elif role == 'student':

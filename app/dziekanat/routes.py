@@ -591,6 +591,9 @@ def view_internship(internship_id):
       <a href="/dziekanat/internship/{internship_id}/protocol" class="btn btn-teal">
         📋 Protokół
       </a>
+      <a href="/admin/export/{internship.student_id}" class="btn btn-ghost">
+        📦 Eksportuj ZIP
+      </a>
     </div>
   </div>
 </div>
