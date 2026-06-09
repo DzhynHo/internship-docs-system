@@ -1,7 +1,7 @@
 # ePraktyki – System zarządzania dokumentacją praktyk
 
 Projekt opracowany przez **Valeriia Khylchenko**   
-[live](epraktyki.pythonanywhere.com)
+[live]([epraktyki.pythonanywhere.com](https://epraktyki.pythonanywhere.com/auth/login))
 
 ##  Opis projektu
 
