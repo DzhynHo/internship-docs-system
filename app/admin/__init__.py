@@ -88,9 +88,24 @@ def _doc_to_pdf_bytes(att_name, submission):
 def export_user_files(user_id):
     from app.models import Attachment
 
+    from app.models.internship import Internship
+
     user = User.query.get_or_404(user_id)
-    subs = DocumentSubmission.query.filter_by(user_id=user_id).all()
     att_names = {a.id: a.name for a in Attachment.query.all()}
+
+    # Szukaj dokumentów po user_id ORAZ po praktykach studenta (internship.student_id)
+    internship_ids = [i.id for i in Internship.query.filter_by(student_id=user_id).all()]
+    subs_by_user = DocumentSubmission.query.filter_by(user_id=user_id).all()
+    subs_by_internship = DocumentSubmission.query.filter(
+        DocumentSubmission.internship_id.in_(internship_ids),
+        DocumentSubmission.user_id != user_id
+    ).all() if internship_ids else []
+    seen = set()
+    subs = []
+    for s in subs_by_user + subs_by_internship:
+        if s.id not in seen:
+            seen.add(s.id)
+            subs.append(s)
 
     mem = io.BytesIO()
     count = 0
