@@ -875,20 +875,6 @@ def regulamin():
         for anchor, label in _TOC_ITEMS
     )
 
-    if auth_url:
-        ms_button_html = (
-            '<a href="' + auth_url + '" class="btn-microsoft">'
-            '<svg viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">'
-            '<rect x="1" y="1" width="9" height="9" fill="#f25022"/>'
-            '<rect x="11" y="1" width="9" height="9" fill="#7fba00"/>'
-            '<rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>'
-            '<rect x="11" y="11" width="9" height="9" fill="#ffb900"/>'
-            '</svg>Zaloguj przez Microsoft</a>'
-            '<div class="login-divider"><span>lub zaloguj sie lokalnie</span></div>'
-        )
-    else:
-        ms_button_html = ''
-
     content = f"""
 <div class="page-header">
   <div class="page-header-inner">
