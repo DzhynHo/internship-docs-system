@@ -1024,14 +1024,14 @@ def _internship_form_html(students, opiekunowie, saved=None, errors=None,
         opts = '<option value="">– wybierz studenta –</option>'
         for u in students:
             sel = "selected" if str(s.get("student_id", "")) == str(u.id) else ""
-            opts += f'<option value="{u.id}" {sel}>{_html.escape(u.full_name)} ({_html.escape(u.email)})</option>'
+            opts += f'<option value="{u.id}" {sel}>{_html.escape(u.full_name or u.email or "")} ({_html.escape(u.email or "")})</option>'
         return opts
 
     def sel_opiekunowie():
         opts = '<option value="">– brak opiekuna –</option>'
         for u in opiekunowie:
             sel = "selected" if str(s.get("mentor_id", "")) == str(u.id) else ""
-            opts += f'<option value="{u.id}" {sel}>{_html.escape(u.full_name)} ({_html.escape(u.email)})</option>'
+            opts += f'<option value="{u.id}" {sel}>{_html.escape(u.full_name or u.email or "")} ({_html.escape(u.email or "")})</option>'
         return opts
 
     def sel_status():
