@@ -1,0 +1,5 @@
+Oświadczenie instytucji (załącznik 9)
+
+Instrukcja: oświadczenie o przyjęciu studenta na praktykę zawodową.
+Audience: instytucja, student
+Required: True

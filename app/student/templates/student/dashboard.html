@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - System Praktyk{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Summary Cards -->
+    <div class="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-600">
+        <h3 class="text-gray-600 text-sm font-bold">Aktywne Praktyki</h3>
+        <p class="text-3xl font-bold text-blue-600 mt-2">{{ internships|length }}</p>
+    </div>
+    
+    <div class="bg-green-50 rounded-lg p-6 border-l-4 border-green-600">
+        <h3 class="text-gray-600 text-sm font-bold">Zatwierdzonych Dokumentów</h3>
+        <p class="text-3xl font-bold text-green-600 mt-2">
+            {% set approved_count = 0 %}
+            {% for internship in internships %}
+                {% for doc in internship.documents %}
+                    {% if doc.status == 'approved' %}
+                        {% set approved_count = approved_count + 1 %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            {{ approved_count }}
+        </p>
+    </div>
+    
+    <div class="bg-yellow-50 rounded-lg p-6 border-l-4 border-yellow-600">
+        <h3 class="text-gray-600 text-sm font-bold">Oczekujących Zatwierdzenia</h3>
+        <p class="text-3xl font-bold text-yellow-600 mt-2">
+            {% set pending_count = 0 %}
+            {% for internship in internships %}
+                {% for doc in internship.documents %}
+                    {% if doc.status in ['submitted', 'pending_review'] %}
+                        {% set pending_count = pending_count + 1 %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            {{ pending_count }}
+        </p>
+    </div>
+    
+    <div class="bg-red-50 rounded-lg p-6 border-l-4 border-red-600">
+        <h3 class="text-gray-600 text-sm font-bold">Wymagające Poprawy</h3>
+        <p class="text-3xl font-bold text-red-600 mt-2">
+            {% set needs_revision = 0 %}
+            {% for internship in internships %}
+                {% for doc in internship.documents %}
+                    {% if doc.status == 'rejected' %}
+                        {% set needs_revision = needs_revision + 1 %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            {{ needs_revision }}
+        </p>
+    </div>
+</div>
+
+<!-- Internships List -->
+<h2 class="text-2xl font-bold text-gray-800 mb-6">
+    <i class="fas fa-briefcase mr-2 text-blue-600"></i>
+    Moje Praktyki
+</h2>
+
+{% if internships %}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {% for internship in internships %}
+        <div class="card">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">{{ internship.company_name }}</h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                        <i class="fas fa-calendar mr-1"></i>
+                        {{ internship.start_date.strftime('%d.%m.%Y') }} - {{ internship.end_date.strftime('%d.%m.%Y') }}
+                    </p>
+                </div>
+                {% if internship.status == 'active' %}
+                    <span class="badge-success">AKTYWNA</span>
+                {% elif internship.status == 'completed' %}
+                    <span class="badge-info">UKOŃCZONA</span>
+                {% else %}
+                    <span class="badge-danger">{{ internship.status.upper() }}</span>
+                {% endif %}
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="mb-4">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-semibold text-gray-700">Postęp: {{ internship.completion_percent }}%</span>
+                    <span class="text-sm text-gray-600">{{ internship.total_hours_worked }}/{{ internship.total_hours }} h</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ internship.completion_percent }}%;"></div>
+                </div>
+            </div>
+            
+            <!-- Documents Summary -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-gray-700 mb-3">Dokumenty:</h4>
+                
+                {% set doc_statuses = {
+                    'approved': 0,
+                    'submitted': 0,
+                    'pending_review': 0,
+                    'draft': 0,
+                    'rejected': 0
+                } %}
+                
+                {% for doc in internship.documents %}
+                    {% if doc.status in doc_statuses %}
+                        {% set _ = doc_statuses.update({doc.status: doc_statuses[doc.status] + 1}) %}
+                    {% endif %}
+                {% endfor %}
+                
+                <div class="space-y-2 text-sm">
+                    {% if doc_statuses['approved'] > 0 %}
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            <span>{{ doc_statuses['approved'] }} zatwierdzony(ch)</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if doc_statuses['submitted'] + doc_statuses['pending_review'] > 0 %}
+                        <div class="flex items-center">
+                            <i class="fas fa-hourglass-half text-yellow-600 mr-2"></i>
+                            <span>{{ doc_statuses['submitted'] + doc_statuses['pending_review'] }} oczekujący(ch)</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if doc_statuses['draft'] > 0 %}
+                        <div class="flex items-center">
+                            <i class="fas fa-file-alt text-gray-600 mr-2"></i>
+                            <span>{{ doc_statuses['draft'] }} draft(u)</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if doc_statuses['rejected'] > 0 %}
+                        <div class="flex items-center">
+                            <i class="fas fa-times-circle text-red-600 mr-2"></i>
+                            <span>{{ doc_statuses['rejected'] }} wymagający(ch) poprawy</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex gap-2">
+                <a href="{{ url_for('student.view_internship', internship_id=internship.id) }}" class="btn-primary text-sm w-full">
+                    <i class="fas fa-eye mr-1"></i> Szczegóły
+                </a>
+                <a href="{{ url_for('student.view_internship', internship_id=internship.id) }}" class="btn-secondary text-sm w-full">
+                    <i class="fas fa-edit mr-1"></i> Edytuj
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card text-center py-12">
+        <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+        <p class="text-gray-600 text-lg">Nie masz żadnych aktywnych praktyk.</p>
+        <p class="text-gray-500 text-sm mt-2">Skontaktuj się z dziekanatem aby zarejestrować praktykę.</p>
+    </div>
+{% endif %}
+
+<!-- Recent Activity -->
+<div class="mt-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+        <i class="fas fa-history mr-2 text-blue-600"></i>
+        Ostatnia Aktywność
+    </h2>
+    
+    <div class="card">
+        {% set recent_docs = [] %}
+        {% for internship in internships %}
+            {% for doc in internship.documents|sort(attribute='updated_at', reverse=True) %}
+                {% if recent_docs|length < 5 %}
+                    {% set _ = recent_docs.append((internship, doc)) %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        
+        {% if recent_docs %}
+            <div class="space-y-4">
+                {% for internship, doc in recent_docs %}
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div>
+                        <p class="font-semibold text-gray-800">
+                            {% if doc.attachment %}
+                                {{ doc.attachment.name }}
+                            {% else %}
+                                Dokument #{{ doc.id }}
+                            {% endif %}
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            {{ internship.company_name }}
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-gray-500">
+                            {{ doc.updated_at.strftime('%d.%m.%Y %H:%M') }}
+                        </span>
+                        <span class="
+                            {% if doc.status == 'approved' %}
+                                badge-success
+                            {% elif doc.status == 'submitted' or doc.status == 'pending_review' %}
+                                badge-warning
+                            {% elif doc.status == 'rejected' %}
+                                badge-danger
+                            {% else %}
+                                badge-info
+                            {% endif %}
+                        ">
+                            {{ doc.status.replace('_', ' ').upper() }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600 text-center py-8">Brak niedawnej aktywności</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

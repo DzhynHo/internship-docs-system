@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+
+{% block title %}Zarządzanie użytkownikami – Panel admina{% endblock %}
+
+{% block extra_css %}
+<style>
+  nav.ans-navbar {
+    background: #1a2744 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 28px !important;
+    height: 68px !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,.18) !important;
+  }
+  nav.ans-navbar a.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  nav.ans-navbar a.brand img { height: 44px; background: white; padding: 4px; border-radius: 4px; }
+  nav.ans-navbar .brand-text { color: #fff; line-height: 1.2; }
+  nav.ans-navbar .brand-text > *:first-child { font-size: 15px; font-weight: 700; display: block; color: #fff; }
+  nav.ans-navbar .brand-text span { font-size: 12px; font-weight: 300; color: rgba(255,255,255,.65); }
+  nav.ans-navbar > nav { display: flex; align-items: center; gap: 4px; }
+  nav.ans-navbar > nav a { color: rgba(255,255,255,.75) !important; text-decoration: none !important; padding: 7px 14px !important; border-radius: 6px !important; font-size: 13.5px !important; font-weight: 500 !important; transition: all .15s !important; background: transparent !important; }
+  nav.ans-navbar > nav a:hover { color: #fff !important; background: rgba(255,255,255,.1) !important; }
+  nav.ans-navbar > nav a.btn-logout { background: rgba(255,255,255,.1) !important; border: 1px solid rgba(255,255,255,.2) !important; color: #fff !important; }
+  .ans-header-strip { height: 4px; background: linear-gradient(90deg, #3b5bdb 0%, #0d9488 100%); }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --accent: #3b5bdb;
+    --accent-hover: #2f4ac0;
+    --teal: #0d9488;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --bg: #f0f2f7;
+    --surface: #ffffff;
+    --surface-2: #f8f9fc;
+    --border: #dde1ef;
+    --border-light: #eaecf5;
+    --text: #111827;
+    --text-mid: #374151;
+    --text-muted: #6b7280;
+    --text-light: #9ca3af;
+    --shadow-sm: 0 1px 3px rgba(26,39,68,.08);
+    --shadow-lg: 0 8px 32px rgba(26,39,68,.13);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg) !important; }
+
+  /* override tailwind container na main */
+  main.container { max-width: 100% !important; padding: 0 !important; }
+
+  .page-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 0;
+  }
+  .page-header-inner {
+    max-width: 1180px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .page-title-group h1 { font-size: 22px; font-weight: 700; color: var(--navy); letter-spacing: -.3px; }
+  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-muted); margin-top: 4px; }
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .admin-container { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; padding: 24px 0 0; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 14px;
+  }
+  .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+  .stat-icon.blue { background: #eff3ff; }
+  .stat-icon.green { background: var(--green-light); }
+  .stat-icon.amber { background: var(--amber-light); }
+  .stat-icon.red { background: var(--red-light); }
+  .stat-val { font-size: 26px; font-weight: 700; color: var(--navy); letter-spacing: -.5px; line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 500; }
+
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 0 14px; flex-wrap: wrap; }
+  .toolbar-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .search-box { position: relative; }
+  .search-box input {
+    border: 1px solid var(--border) !important; background: var(--surface) !important;
+    border-radius: var(--radius-sm) !important; padding: 8px 12px 8px 36px !important;
+    font-size: 13.5px; font-family: inherit; color: var(--text); width: 260px;
+    transition: border .15s, box-shadow .15s; outline: none;
+    box-shadow: none !important;
+  }
+  .search-box input:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px rgba(59,91,219,.12) !important; }
+  .search-box svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+  .filter-select {
+    border: 1px solid var(--border) !important; background: var(--surface) !important;
+    border-radius: var(--radius-sm) !important; padding: 8px 12px !important;
+    font-size: 13px; font-family: inherit; color: var(--text-mid); outline: none; cursor: pointer;
+  }
+
+  .btn-adm {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: var(--radius-sm);
+    font-size: 13.5px; font-weight: 600; font-family: inherit;
+    cursor: pointer; border: none; text-decoration: none;
+    transition: all .15s; white-space: nowrap;
+  }
+  .btn-adm-primary { background: var(--accent); color: #fff !important; }
+  .btn-adm-primary:hover { background: var(--accent-hover); }
+  .btn-adm-ghost { background: transparent; color: var(--text-mid) !important; border: 1px solid var(--border); }
+  .btn-adm-ghost:hover { background: var(--surface-2); }
+  .btn-adm-sm { padding: 5px 11px !important; font-size: 12.5px !important; }
+
+  .table-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm);
+    overflow: hidden; margin-bottom: 24px;
+  }
+  .table-info {
+    padding: 14px 20px; border-bottom: 1px solid var(--border-light);
+    font-size: 12.5px; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .adm-table { width: 100%; border-collapse: collapse; }
+  .adm-table thead th {
+    background: var(--surface-2); padding: 11px 16px; text-align: left;
+    font-size: 11.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .6px; color: var(--text-muted);
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  .adm-table tbody tr { border-bottom: 1px solid var(--border-light); transition: background .1s; }
+  .adm-table tbody tr:last-child { border-bottom: none; }
+  .adm-table tbody tr:hover { background: var(--surface-2); }
+  .adm-table tbody td { padding: 13px 16px; font-size: 13.5px; vertical-align: middle; }
+
+  .user-cell { display: flex; align-items: center; gap: 11px; }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0; color: #fff;
+  }
+  .av-0 { background: #1a2744; } .av-1 { background: #0d9488; }
+  .av-2 { background: #3b5bdb; } .av-3 { background: #d97706; } .av-4 { background: #dc2626; }
+  .user-name { font-weight: 600; color: var(--navy); font-size: 13.5px; }
+  .user-meta { font-size: 11.5px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
+
+  .adm-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 11.5px; font-weight: 600; white-space: nowrap;
+  }
+  .adm-badge-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .role-administrator, .role-admin { background: #eff3ff; color: #3b5bdb; }
+  .role-administrator .adm-badge-dot, .role-admin .adm-badge-dot { background: #3b5bdb; }
+  .role-student    { background: var(--green-light); color: var(--green); }
+  .role-student    .adm-badge-dot { background: var(--green); }
+  .role-dziekanat  { background: var(--amber-light); color: var(--amber); }
+  .role-dziekanat  .adm-badge-dot { background: var(--amber); }
+  .role-sekretariat{ background: #f0fdf4; color: #15803d; }
+  .role-sekretariat .adm-badge-dot { background: #15803d; }
+  .role-dyrekcja   { background: #fdf4ff; color: #9333ea; }
+  .role-dyrekcja   .adm-badge-dot { background: #9333ea; }
+  .role-opiekun    { background: #f0fdfa; color: #0d9488; }
+  .role-opiekun    .adm-badge-dot { background: #0d9488; }
+  .role-pending    { background: var(--amber-light); color: var(--amber); }
+  .role-pending    .adm-badge-dot { background: var(--amber); }
+  .status-active   { background: var(--green-light); color: var(--green); }
+  .status-active   .adm-badge-dot { background: var(--green); }
+  .status-inactive { background: var(--red-light); color: var(--red); }
+  .status-inactive .adm-badge-dot { background: var(--red); }
+
+  .actions-cell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 14px; }
+
+  @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ans-header-strip"></div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title-group">
+      <h1>Zarządzanie użytkownikami</h1>
+      <div class="breadcrumb">
+        <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
+        <span>›</span>
+        <a href="{{ url_for('admin.index') }}">Panel admina</a>
+        <span>›</span>
+        <span>Użytkownicy</span>
+      </div>
+    </div>
+    <a href="{{ url_for('admin.create_user') }}" class="btn-adm btn-adm-primary">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Dodaj użytkownika
+    </a>
+  </div>
+</div>
+
+<div class="admin-container">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon blue">👥</div>
+      <div>
+        <div class="stat-val">{{ users | length }}</div>
+        <div class="stat-label">Wszyscy użytkownicy</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">🎓</div>
+      <div>
+        <div class="stat-val">{{ users | selectattr('role','equalto','student') | list | length }}</div>
+        <div class="stat-label">Studenci</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber">🏛️</div>
+      <div>
+        <div class="stat-val">{{ users | rejectattr('role','in',['student','administrator','admin']) | list | length }}</div>
+        <div class="stat-label">Pracownicy</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">🔑</div>
+      <div>
+        <div class="stat-val">{{ users | selectattr('role','in',['administrator','admin']) | list | length }}</div>
+        <div class="stat-label">Administratorzy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Szukaj użytkownika…" oninput="filterTable()">
+      </div>
+      <select class="filter-select" id="roleFilter" onchange="filterTable()">
+        <option value="">Wszystkie role</option>
+        <option value="administrator">Administrator</option>
+        <option value="student">Student</option>
+        <option value="dziekanat">Dziekanat</option>
+        <option value="sekretariat">Sekretariat</option>
+        <option value="dyrekcja">Dyrekcja</option>
+      </select>
+      <select class="filter-select" id="statusFilter" onchange="filterTable()">
+        <option value="">Wszystkie statusy</option>
+        <option value="active">Aktywni</option>
+        <option value="inactive">Nieaktywni</option>
+      </select>
+    </div>
+    <button class="btn-adm btn-adm-ghost btn-adm-sm" onclick="exportCSV()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Eksportuj CSV
+    </button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="table-info">
+      <span id="tableInfo">Wszyscy użytkownicy: <strong>{{ users | length }}</strong></span>
+    </div>
+
+    {% if users %}
+    <table class="adm-table" id="usersTable">
+      <thead>
+        <tr>
+          <th>Użytkownik</th>
+          <th>Email</th>
+          <th>Rola</th>
+          <th>Status</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set role_labels = {'administrator':'Administrator','admin':'Administrator','student':'Student','opiekun':'Opiekun','dziekanat':'Dziekanat','sekretariat':'Sekretariat','dyrekcja':'Dyrekcja','pending':'Oczekujący'} %}
+        {% for u in users %}
+        {% set initials = ((u.first_name or u.email)[0] | upper) + ((u.last_name[0] | upper) if u.last_name else '') %}
+        <tr
+          data-name="{{ ((u.first_name or '') ~ ' ' ~ (u.last_name or '') ~ ' ' ~ u.email) | lower }}"
+          data-role="{{ u.role }}"
+          data-active="{{ 'active' if u.is_active else 'inactive' }}"
+        >
+          <td>
+            <div class="user-cell">
+              <div class="avatar av-{{ loop.index0 % 5 }}">{{ initials }}</div>
+              <div>
+                <div class="user-name">
+                  {% if u.first_name or u.last_name %}{{ u.first_name or '' }} {{ u.last_name or '' }}
+                  {% else %}{{ u.email.split('@')[0] }}{% endif %}
+                </div>
+                <div class="user-meta">#{{ '%04d' | format(u.id) }}</div>
+              </div>
+            </div>
+          </td>
+          <td style="color:var(--text-mid);font-size:13px;">{{ u.email }}</td>
+          <td>
+            <span class="adm-badge role-{{ u.role }}">
+              <span class="adm-badge-dot"></span>
+              {{ role_labels.get(u.role, u.role) }}
+            </span>
+          </td>
+          <td>
+            {% if u.is_active %}
+              <span class="adm-badge status-active"><span class="adm-badge-dot"></span>Aktywny</span>
+            {% else %}
+              <span class="adm-badge status-inactive"><span class="adm-badge-dot"></span>Nieaktywny</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="actions-cell">
+              <a href="{{ url_for('admin.assign_role', user_id=u.id) }}" class="btn-adm btn-adm-ghost btn-adm-sm">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Zmień rolę
+              </a>
+              <a href="{{ url_for('admin.export_user_files', user_id=u.id) }}" class="btn-adm btn-adm-ghost btn-adm-sm">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Eksportuj pliki
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <p>Brak użytkowników w systemie.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Animacja wierszy tabeli
+document.addEventListener('DOMContentLoaded', () => {
+  const rows = document.querySelectorAll('#usersTable tbody tr');
+  rows.forEach((row, i) => {
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(6px)';
+    row.style.transition = `opacity 0.25s ease ${i * 25}ms, transform 0.25s ease ${i * 25}ms`;
+    setTimeout(() => {
+      row.style.opacity = '1';
+      row.style.transform = 'translateY(0)';
+    }, 50 + i * 25);
+  });
+});
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const role = document.getElementById('roleFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  const rows = document.querySelectorAll('#usersTable tbody tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const ok = (!q || row.dataset.name.includes(q))
+            && (!role || row.dataset.role === role)
+            && (!status || row.dataset.active === status);
+    row.style.display = ok ? '' : 'none';
+    if (ok) visible++;
+  });
+  document.getElementById('tableInfo').innerHTML =
+    `Wyświetlanie <strong>${visible}</strong> z <strong>${rows.length}</strong> użytkowników`;
+}
+
+function exportCSV() {
+  const rows = [['ID','Email','Rola','Status']];
+  document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+    if (row.style.display === 'none') return;
+    const cells = row.querySelectorAll('td');
+    rows.push([
+      row.querySelector('.user-meta').textContent.trim(),
+      cells[1].textContent.trim(),
+      cells[2].textContent.trim(),
+      cells[3].textContent.trim()
+    ]);
+  });
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent('\uFEFF' + csv);
+  a.download = 'uzytkownicy.csv';
+  a.click();
+}
+</script>
+{% endblock %}

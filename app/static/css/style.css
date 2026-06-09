@@ -1,0 +1,43 @@
+:root{
+    --navy: #1a3a6b;
+    --accent: #7c9cbc;
+    --white: #ffffff;
+    --muted: #f4f6f9;
+}
+
+*{box-sizing:border-box;font-family:Inter, Roboto, -apple-system, 'Segoe UI', Arial, sans-serif}
+body{margin:0;background:var(--muted);color:#222}
+
+.ans-navbar{background:var(--navy);color:var(--white);display:flex;align-items:center;justify-content:space-between;padding:14px 28px;height:130px}
+.ans-navbar .brand{display:flex;align-items:center;gap:18px;text-decoration:none;color:inherit}
+.ans-navbar .brand img{height:120px;width:auto;background:#fff;padding:10px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.08)}
+.ans-navbar .brand-text{line-height:1;color:var(--white);font-weight:700;font-size:18px}
+.ans-navbar .brand-text span{display:block;font-weight:400;font-size:13px;opacity:0.95}
+.ans-navbar nav{display:flex;align-items:center;gap:26px}
+.ans-navbar a{color:var(--white);text-decoration:none;padding:8px 12px;border-radius:6px;font-size:16px}
+.ans-navbar a:hover{background:rgba(255,255,255,0.04)}
+.ans-navbar .btn-logout{background:var(--accent);color:var(--navy);font-weight:800;padding:8px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)}
+
+.ans-header-strip{height:6px;background:linear-gradient(90deg,var(--accent),#7c9cbc);}
+
+.login-page{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px}
+.login-card{background:#fff;padding:28px;border-radius:12px;box-shadow:0 6px 20px rgba(10,10,20,0.08);max-width:420px;width:100%;text-align:center}
+.login-card .login-logo{height:110px;margin-bottom:8px}
+/* Login card text color: navy */
+.login-card, .login-card h1, .login-card p{color:var(--navy)}
+.btn-microsoft{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#111;color:#fff;text-decoration:none;margin-top:12px;font-size:14px}
+.btn-microsoft svg{width:34px;height:34px}
+
+.welcome-banner{display:flex;align-items:center;gap:16px;background:#fff;padding:18px;border-radius:10px;margin:18px}
+.welcome-avatar{background:var(--navy);color:#fff;width:72px;height:72px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700}
+.welcome-text h2{margin:0 0 6px 0}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:18px}
+.info-card{background:#fff;padding:12px;border-radius:8px}
+.card-label{font-size:12px;color:#666}
+.card-value{font-size:16px;font-weight:600}
+
+.ans-footer{padding:18px;text-align:center;color:#666;font-size:13px}
+
+.error-page{padding:36px;text-align:center}
+.error-code{font-size:48px;font-weight:800;color:var(--navy)}

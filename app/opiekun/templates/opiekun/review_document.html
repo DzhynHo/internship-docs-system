@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Przegląd dokumentu – Panel Opiekuna</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    :root {
+      --navy:#1a2744;--accent:#3b5bdb;--accent-hover:#2f4ac0;--teal:#0d9488;
+      --red:#dc2626;--red-light:#fef2f2;--amber:#d97706;--amber-light:#fffbeb;
+      --green:#16a34a;--green-light:#f0fdf4;--bg:#f0f2f7;--surface:#ffffff;
+      --surface-2:#f8f9fc;--border:#dde1ef;--border-light:#eaecf5;
+      --text:#111827;--text-mid:#374151;--text-muted:#6b7280;
+      --shadow-sm:0 1px 3px rgba(26,39,68,.08);--shadow-lg:0 8px 32px rgba(26,39,68,.13);
+      --radius:10px;--radius-sm:6px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+    nav.ans-navbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:68px;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+    nav.ans-navbar a.brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
+    nav.ans-navbar a.brand img{height:44px;background:white;padding:4px;border-radius:4px;}
+    nav.ans-navbar .brand-text{color:#fff;line-height:1.2;}
+    nav.ans-navbar .brand-text>strong{font-size:15px;font-weight:700;display:block;}
+    nav.ans-navbar .brand-text span{font-size:12px;font-weight:300;color:rgba(255,255,255,.65);}
+    nav.ans-navbar>nav{display:flex;align-items:center;gap:4px;}
+    nav.ans-navbar>nav a{color:rgba(255,255,255,.75);text-decoration:none;padding:7px 14px;border-radius:6px;font-size:13.5px;font-weight:500;transition:all .15s;}
+    nav.ans-navbar>nav a:hover{color:#fff;background:rgba(255,255,255,.1);}
+    nav.ans-navbar>nav a.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);}
+    .ans-header-strip{height:4px;background:linear-gradient(90deg,#3b5bdb 0%,#0d9488 100%);}
+    .page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 0;}
+    .page-header-inner{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .page-title-group h1{font-size:20px;font-weight:700;color:var(--navy);}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);margin-top:4px;}
+    .breadcrumb a{color:var(--accent);text-decoration:none;}
+    .container{max-width:1200px;margin:0 auto;padding:28px 28px 60px;flex:1;}
+    .grid-2{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:20px;}
+    .card-header{padding:14px 20px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;}
+    .card-header h2{font-size:14px;font-weight:700;color:var(--navy);}
+    .card-body{padding:20px;}
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+    .meta-item label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);display:block;margin-bottom:3px;}
+    .meta-item p{font-size:13.5px;color:var(--text-mid);font-weight:500;}
+    /* Document content display */
+    .doc-section{margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border-light);}
+    .doc-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+    .doc-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:10px;}
+    .doc-section-content{font-size:14px;line-height:1.7;color:var(--text-mid);white-space:pre-wrap;background:var(--surface-2);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:14px 16px;}
+    /* Comments history */
+    .comments-box{background:var(--amber-light);border:1px solid #fde68a;border-radius:var(--radius-sm);padding:14px 16px;margin-top:16px;}
+    .comments-box h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--amber);margin-bottom:8px;}
+    .comments-box p{font-size:13.5px;color:#78350f;white-space:pre-wrap;line-height:1.6;}
+    /* Action panel */
+    .action-section{margin-bottom:20px;}
+    .action-section h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;border:none;text-decoration:none;transition:all .15s;white-space:nowrap;width:100%;justify-content:center;}
+    .btn-success{background:var(--green);color:#fff !important;}
+    .btn-success:hover{background:#15803d;}
+    .btn-danger{background:var(--red);color:#fff !important;}
+    .btn-danger:hover{background:#b91c1c;}
+    .btn-ghost{background:transparent;color:var(--text-mid) !important;border:1px solid var(--border);}
+    .btn-ghost:hover{background:var(--surface-2);}
+    .btn-primary{background:var(--accent);color:#fff !important;}
+    .btn-primary:hover{background:var(--accent-hover);}
+    .btn-sm{padding:6px 14px;font-size:12px;width:auto;}
+    textarea.feedback{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13.5px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border .15s,box-shadow .15s;resize:vertical;min-height:120px;margin-bottom:10px;}
+    textarea.feedback:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,91,219,.12);}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600;}
+    .badge-dot{width:6px;height:6px;border-radius:50%;}
+    .badge-pending{background:var(--amber-light);color:var(--amber);}
+    .badge-pending .badge-dot{background:var(--amber);}
+    .badge-approved{background:var(--green-light);color:var(--green);}
+    .badge-approved .badge-dot{background:var(--green);}
+    .badge-rejected{background:var(--red-light);color:var(--red);}
+    .badge-rejected .badge-dot{background:var(--red);}
+    .reject-form{display:none;}
+    .reject-form.open{display:block;}
+    .divider{height:1px;background:var(--border-light);margin:16px 0;}
+    .alert{padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:16px;border-left:4px solid transparent;}
+    .alert-success{background:var(--green-light);border-color:var(--green);color:#14532d;}
+    .alert-error{background:var(--red-light);border-color:var(--red);color:#7f1d1d;}
+    .alert-info{background:#eff3ff;border-color:var(--accent);color:#1e3a8a;}
+    .already-decided{padding:16px;background:var(--surface-2);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;color:var(--text-muted);font-size:13px;}
+    .ans-footer{padding:18px;text-align:center;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);background:var(--surface);}
+    @media(max-width:900px){.grid-2{grid-template-columns:1fr;}.meta-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav class="ans-navbar">
+  <a class="brand" href="/auth/dashboard">
+    <img src="/static/img/logo.png" alt="ANS" onerror="this.style.display='none'">
+    <div class="brand-text">
+      <strong>Akademia Nauk Stosowanych</strong>
+      <span>w Elblągu – System Praktyk</span>
+    </div>
+  </a>
+  <nav>
+    <a href="/auth/dashboard">Dashboard</a>
+    <a href="/opiekun/dashboard">Panel opiekuna</a>
+    <a href="/auth/logout" class="btn-logout">Wyloguj</a>
+  </nav>
+</nav>
+<div class="ans-header-strip"></div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title-group">
+      <h1>Przegląd dokumentu</h1>
+      <div class="breadcrumb">
+        <a href="/auth/dashboard">Dashboard</a> <span>›</span>
+        <a href="/opiekun/dashboard">Panel opiekuna</a> <span>›</span>
+        <a href="{{ url_for('opiekun.view_internship', internship_id=internship.id) }}">{{ internship.student.full_name or internship.student.email }}</a> <span>›</span>
+        <span>{{ attachment.name if attachment else 'Dokument' }}</span>
+      </div>
+    </div>
+    <a href="{{ url_for('opiekun.view_internship', internship_id=internship.id) }}" class="btn btn-ghost btn-sm">← Powrót do praktyki</a>
+  </div>
+</div>
+
+<div class="container">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat, msg in messages %}
+      {% set cls = {'success':'alert-success','error':'alert-error'}.get(cat,'alert-info') %}
+      <div class="alert {{ cls }}">{{ msg }}</div>
+    {% endfor %}{% endif %}
+  {% endwith %}
+
+  <div class="grid-2">
+
+    <!-- LEFT: document content -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <h2>📄 {{ attachment.name if attachment else 'Dokument #' ~ document.id }}</h2>
+          {% if document.status in ['submitted', 'pending_review'] %}
+            <span class="badge badge-pending"><span class="badge-dot"></span>Oczekuje na przegląd</span>
+          {% elif document.status == 'approved' %}
+            <span class="badge badge-approved"><span class="badge-dot"></span>Zatwierdzone</span>
+          {% elif document.status == 'rejected' %}
+            <span class="badge badge-rejected"><span class="badge-dot"></span>Do poprawy</span>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <!-- Meta info -->
+          <div class="meta-grid">
+            <div class="meta-item"><label>Student</label><p>{{ document.user.full_name or document.user.email }}</p></div>
+            <div class="meta-item"><label>Firma</label><p>{{ internship.company_name }}</p></div>
+            <div class="meta-item"><label>Wysłano</label><p style="font-family:'IBM Plex Mono',monospace;font-size:13px;">{{ document.created_at.strftime('%d.%m.%Y %H:%M') }}</p></div>
+            <div class="meta-item"><label>Ostatnia zmiana</label><p style="font-family:'IBM Plex Mono',monospace;font-size:13px;">{{ document.updated_at.strftime('%d.%m.%Y %H:%M') }}</p></div>
+          </div>
+
+          <!-- Document data -->
+          {% if document.data %}
+            {% set label_map = {
+              'place_description':    'I. Charakterystyka miejsca odbywania praktyki',
+              'work_description':     'II. Opis i analiza wykonywanych prac',
+              'skills_acquired':      'III. Wiedza i umiejętności uzyskane w trakcie praktyki',
+              'report_text':          'Treść sprawozdania',
+              'student_first_name':   'Imię studenta',
+              'student_last_name':    'Nazwisko studenta',
+              'student_name':         'Imię i nazwisko studenta',
+              'index_number':         'Nr indeksu',
+              'album_number':         'Nr albumu',
+              'company_name':         'Nazwa firmy',
+              'company_address':      'Adres firmy',
+              'company_phone':        'Telefon firmy',
+              'company_email':        'Email firmy',
+              'company_nip':          'NIP firmy',
+              'company_contact':      'Osoba kontaktowa w firmie',
+              'company_supervisor':   'Opiekun zakładowy',
+              'supervisor_role':      'Stanowisko opiekuna',
+              'job_description':      'Opis stanowiska',
+              'mentor_name':          'Opiekun w firmie',
+              'study_type':           'Forma studiów',
+              'specialization':       'Specjalność',
+              'agreement_number':     'Numer umowy',
+              'agreement_date':       'Data umowy',
+              'date_from':            'Data od',
+              'date_to':              'Data do',
+              'internship_duration':  'Czas trwania praktyki',
+              'internship_year':      'Rok akademicki',
+              'university_supervisor':'Opiekun uczelniany',
+              'bhp_confirmed':        'Szkolenie BHP',
+              'submitted_at':         'Data wysłania',
+              'cel_praktyki':         'Cel praktyki',
+              'zakres_zadan':         'Zakres wykonywanych zadań',
+              'oczekiwane_efekty':    'Oczekiwane efekty kształcenia',
+              'miejsce':              'Miejsce odbywania praktyki',
+              'notes':                'Uwagi',
+              'type':                 'Typ dokumentu'
+            } %}
+            {% for key, value in document.data.items() %}
+              {% if value and key not in ('submitted_at', 'type') %}
+              <div class="doc-section">
+                <div class="doc-section-title">{{ label_map.get(key, key.replace('_', ' ').capitalize()) }}</div>
+                {% if key == 'bhp_confirmed' %}
+                  {% if value == '1' %}
+                    <div class="doc-section-content" style="background:#f0fdf4;border-color:#bbf7d0;color:#15803d;font-weight:600;">
+                      ✅ Tak – student odbył szkolenie BHP
+                    </div>
+                  {% else %}
+                    <div class="doc-section-content" style="background:#fef2f2;border-color:#fca5a5;color:#991b1b;">
+                      ✗ Nie potwierdzono szkolenia BHP
+                    </div>
+                  {% endif %}
+                {% elif key == 'study_type' %}
+                  <div class="doc-section-content">{{ {'stacjonarne': 'Stacjonarne', 'niestacjonarne': 'Niestacjonarne'}.get(value, value) }}</div>
+                {% else %}
+                  <div class="doc-section-content">{{ value }}</div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <p style="color:var(--text-muted);font-size:13px;">Brak treści dokumentu.</p>
+          {% endif %}
+
+          <!-- Existing comments -->
+          {% if document.comments %}
+          <div class="comments-box">
+            <h3>💬 Uwagi od opiekuna</h3>
+            <p>{{ document.comments }}</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: action panel -->
+    <div>
+      <div class="card">
+        <div class="card-header"><h2>✍️ Decyzja</h2></div>
+        <div class="card-body">
+
+          {% if document.status in ['submitted', 'pending_review'] %}
+
+          <!-- APPROVE -->
+          <div class="action-section">
+            <h3>Zatwierdź dokument</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">Dokument spełnia wymagania i jest kompletny.</p>
+            <form method="POST" action="{{ url_for('opiekun.review_document', document_id=document.id) }}">
+              <button type="submit" name="action" value="approve" class="btn btn-success"
+                      onclick="return confirm('Zatwierdzić dokument? Student otrzyma powiadomienie.')">
+                ✅ Zatwierdź
+              </button>
+            </form>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- REJECT / EDIT -->
+          <div class="action-section">
+            <h3>Poprawki</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">
+              Edytuj bezpośrednio lub wyślij prośbę o poprawkę do studenta.
+            </p>
+            <a href="{{ url_for('opiekun.edit_document', document_id=document.id) }}"
+               class="btn btn-ghost"
+               style="width:100%;justify-content:center;margin-bottom:10px;">
+              🖊️ Edytuj formularz bezpośrednio
+            </a>
+            <button class="btn btn-danger" onclick="toggleReject()" id="reject-toggle-btn"
+                    style="width:100%;justify-content:center;">
+              ✏️ Wymagaj poprawki od studenta
+            </button>
+            <form method="POST" action="{{ url_for('opiekun.review_document', document_id=document.id) }}"
+                  class="reject-form" id="reject-form" style="margin-top:14px;">
+              <textarea name="comment" class="feedback"
+                        placeholder="Opisz szczegółowo co student powinien zmienić lub uzupełnić..."
+                        required></textarea>
+              <button type="submit" name="action" value="reject" class="btn btn-danger"
+                      onclick="return validateComment(this.form)">
+                📩 Wyślij i odrzuć
+              </button>
+              <button type="button" class="btn btn-ghost" style="margin-top:8px;" onclick="toggleReject()">
+                Anuluj
+              </button>
+            </form>
+          </div>
+
+          {% elif document.status == 'approved' %}
+          <div class="already-decided">
+            <div style="font-size:28px;margin-bottom:8px;">✅</div>
+            <p><strong>Dokument zatwierdzony</strong></p>
+            {% if document.reviewer %}
+              <p style="margin-top:4px;font-size:12px;">przez {{ document.reviewer.full_name or document.reviewer.email }}</p>
+            {% endif %}
+            <p style="margin-top:4px;font-size:12px;">{{ document.updated_at.strftime('%d.%m.%Y %H:%M') }}</p>
+          </div>
+          {% elif document.status == 'rejected' %}
+          <div class="already-decided" style="background:var(--red-light);border-color:#fca5a5;">
+            <div style="font-size:28px;margin-bottom:8px;">✏️</div>
+            <p style="color:var(--red);"><strong>Odesłano do poprawy</strong></p>
+            <p style="margin-top:4px;font-size:12px;color:#7f1d1d;">{{ document.updated_at.strftime('%d.%m.%Y %H:%M') }}</p>
+          </div>
+          {% else %}
+          <div class="already-decided">
+            <p>Dokument w statusie: <strong>{{ document.status }}</strong></p>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+      <!-- Info card -->
+      <div class="card">
+        <div class="card-header"><h2>ℹ️ Wskazówki</h2></div>
+        <div class="card-body">
+          <ul style="font-size:13px;color:var(--text-muted);line-height:1.8;list-style:none;padding:0;">
+            <li>✅ Zatwierdź gdy dokument spełnia wymagania</li>
+            <li>✏️ Wymagaj poprawki gdy brakuje treści</li>
+            <li>📧 Student dostanie email z Twoim komentarzem</li>
+            <li>🔄 Student może ponownie przesłać po poprawkach</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="ans-footer">&copy; 2026 <strong>Akademia Nauk Stosowanych w Elblągu</strong> – System Obsługi Praktyk</footer>
+
+<script>
+function toggleReject() {
+  const form = document.getElementById('reject-form');
+  const btn  = document.getElementById('reject-toggle-btn');
+  const open = form.classList.toggle('open');
+  btn.style.display = open ? 'none' : 'flex';
+}
+function validateComment(form) {
+  const ta = form.querySelector('textarea[name="comment"]');
+  if (!ta.value.trim()) {
+    alert('Podaj komentarz opisujący wymagane poprawki.');
+    return false;
+  }
+  return confirm('Wysłać poprawki do studenta? Student otrzyma powiadomienie email.');
+}
+
+// Animowane reveal sekcji dokumentu
+document.addEventListener('DOMContentLoaded', () => {
+  const sections = document.querySelectorAll('.doc-section');
+  sections.forEach((s, i) => {
+    s.style.opacity = '0';
+    s.style.transform = 'translateY(8px)';
+    s.style.transition = `opacity 0.3s ease ${i * 40}ms, transform 0.3s ease ${i * 40}ms`;
+    setTimeout(() => {
+      s.style.opacity = '1';
+      s.style.transform = 'translateY(0)';
+    }, 60 + i * 40);
+  });
+});
+</script>
+</body>
+</html>

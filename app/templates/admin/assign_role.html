@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Zmień rolę – ANS System Praktyk</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'IBM Plex Sans',sans-serif;background:#f0f2f7;color:#111827;min-height:100vh;display:flex;flex-direction:column}
+    nav{background:#1a2744;display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:68px;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+    nav a{color:rgba(255,255,255,.8);text-decoration:none;padding:7px 14px;border-radius:6px;font-size:13.5px;font-weight:500}
+    nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+    nav a.logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff}
+    .strip{height:4px;background:linear-gradient(90deg,#3b5bdb 0%,#0d9488 100%)}
+    .page-header{background:#fff;border-bottom:1px solid #dde1ef;padding:22px 0;margin-bottom:28px}
+    .page-header-inner{max-width:700px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    h1{font-size:22px;font-weight:700;color:#1a2744}
+    .breadcrumb{font-size:12.5px;color:#6b7280;margin-top:4px;display:flex;gap:6px}
+    .breadcrumb a{color:#3b5bdb;text-decoration:none}
+    .container{max-width:700px;margin:0 auto;padding:0 24px 48px;flex:1}
+    .card{background:#fff;border:1px solid #dde1ef;border-radius:10px;padding:28px 32px;box-shadow:0 1px 3px rgba(26,39,68,.08)}
+    .user-info{background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+    .avatar{width:44px;height:44px;border-radius:10px;background:#1a2744;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+    .role-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+    .role-option{position:relative}
+    .role-option input{position:absolute;opacity:0;width:0;height:0}
+    .role-option label{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all .15s;text-align:center;font-size:12px;font-weight:600;color:#374151}
+    .role-option input:checked + label{border-color:#3b5bdb;background:#eff3ff;color:#3b5bdb}
+    .role-option label:hover{border-color:#a5b4fc;background:#f5f7ff}
+    .role-option .icon{font-size:22px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:6px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;border:none;text-decoration:none;transition:all .15s}
+    .btn-primary{background:#3b5bdb;color:#fff}
+    .btn-primary:hover{background:#2f4ac0;text-decoration:none}
+    .btn-ghost{background:transparent;color:#374151;border:1px solid #dde1ef}
+    .btn-ghost:hover{background:#f8f9fc;text-decoration:none}
+    footer{padding:16px;text-align:center;color:#6b7280;font-size:12px;border-top:1px solid #dde1ef;background:#fff;margin-top:auto}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/auth/dashboard" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+    <img src="/static/img/logo.png" alt="ANS" style="height:44px;background:#fff;padding:4px;border-radius:4px;" onerror="this.style.display='none'">
+    <div>
+      <strong style="color:#fff;font-size:15px;display:block;">Akademia Nauk Stosowanych w Elblągu</strong>
+      <span style="color:rgba(255,255,255,.6);font-size:11.5px;">Panel Admina</span>
+    </div>
+  </a>
+  <div style="display:flex;gap:4px;">
+    <a href="/auth/dashboard">Dashboard</a>
+    <a href="/admin/">Admin</a>
+    <a href="/admin/users">Użytkownicy</a>
+    <a href="/auth/logout" class="logout">Wyloguj</a>
+  </div>
+</nav>
+<div class="strip"></div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <h1>Zmień rolę użytkownika</h1>
+      <div class="breadcrumb">
+        <a href="/auth/dashboard">Dashboard</a> ›
+        <a href="/admin/users">Użytkownicy</a> ›
+        <span>Zmień rolę</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div style="background:{{ '#f0fdf4' if cat=='success' else '#fef2f2' }};border:1px solid {{ '#bbf7d0' if cat=='success' else '#fecaca' }};border-radius:6px;padding:10px 16px;font-size:13px;color:{{ '#166534' if cat=='success' else '#991b1b' }};margin-bottom:16px;">
+        {{ msg }}
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  <div class="card">
+    <div class="user-info">
+      <div class="avatar">{{ (user.full_name or user.email)[0].upper() }}</div>
+      <div>
+        <div style="font-weight:700;font-size:14px;color:#1a2744;">{{ user.full_name or user.email.split('@')[0] }}</div>
+        <div style="font-size:12.5px;color:#6b7280;margin-top:1px;">{{ user.email }}</div>
+        <div style="font-size:12px;color:#9ca3af;margin-top:1px;">
+          Aktualna rola: <strong style="color:#374151;">{{ user.role }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wyjaśnienie mechanizmu domeny -->
+    <div style="background:#eff3ff;border:1px solid #c7d2fe;border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:12.5px;color:#1e3a8a;line-height:1.65;">
+      <strong style="display:block;margin-bottom:6px;">ℹ️ Jak działa automatyczne nadawanie ról?</strong>
+      Sprawdzanie domeny email działa <strong>tylko przy pierwszym logowaniu przez Microsoft</strong> –
+      jeśli użytkownik nie istnieje jeszcze w bazie, system nadaje mu rolę wg reguły:<br>
+      <span style="font-family:'IBM Plex Mono',monospace;display:block;margin:6px 0 2px;padding:6px 10px;background:rgba(255,255,255,.6);border-radius:4px;">
+        @student.uczelnia.pl → <strong>student</strong><br>
+        @uczelnia.pl &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <strong>oczekujący</strong> (wymaga zatwierdzenia)<br>
+        inna domena &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ brak dostępu (403)
+      </span>
+      Przy kolejnych logowaniach rola z bazy jest używana bez zmian.<br>
+      <strong>Tutaj możesz ją zmienić ręcznie</strong> – np. nadać rolę „opiekun" pracownikowi uczelni.
+      Rejestracja użytkownika odbywa się automatycznie przy logowaniu Microsoft lub ręcznie przez administratora.
+    </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:12px;">
+      Wybierz nową rolę
+    </div>
+
+    <form method="post">
+      {{ form.hidden_tag() }}
+      <div class="role-grid">
+        {% set role_icons = {'student':'🎓','opiekun':'👨‍🏫','dziekanat':'🏛️','sekretariat':'📋','dyrekcja':'🏢','administrator':'⚙️','pending':'⏳'} %}
+        {% for value, label in form.role.choices %}
+        <div class="role-option">
+          <input type="radio" name="role" id="role_{{ value }}" value="{{ value }}"
+                 {{ 'checked' if form.role.data == value }}>
+          <label for="role_{{ value }}">
+            <span class="icon">{{ role_icons.get(value, '👤') }}</span>
+            {{ label }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div style="display:flex;gap:12px;border-top:1px solid #e2e8f0;padding-top:18px;">
+        <button type="submit" class="btn btn-primary"
+                onclick="return confirm('Zmienić rolę użytkownika {{ user.email }}?')">
+          💾 Zapisz zmianę roli
+        </button>
+        <a href="/admin/users" class="btn btn-ghost">Anuluj</a>
+      </div>
+    </form>
+  </div>
+</div>
+<footer>&copy; 2026 Akademia Nauk Stosowanych w Elblągu</footer>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Regulamin Praktyki Zawodowej (PZ)
+
+Instrukcja:
+- Zamień ten plik na oryginalny dokument "Regulamin_PZ.docx" (oryginał, nie skan).
+- Audience: all
+- Required: True

@@ -1,0 +1,5 @@
+Potwierdzenie efektów uczenia się (załącznik 4)
+
+Instrukcja: dokument potwierdzający osiągnięte efekty.
+Audience: student, opiekun
+Required: True

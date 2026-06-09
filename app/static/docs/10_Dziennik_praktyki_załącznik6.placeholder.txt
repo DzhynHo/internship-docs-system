@@ -1,0 +1,5 @@
+Dziennik praktyki zawodowej (załącznik 6)
+
+Instrukcja: dzienniczek mający zapis czynności i godzin.
+Audience: student, opiekun
+Required: True

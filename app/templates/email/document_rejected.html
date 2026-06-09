@@ -1,0 +1,22 @@
+<h2>⚠️ Dokument Wymaga Poprawy</h2>
+
+<p>Cześć {{ student_name }},</p>
+
+<p>Opiekun przejrzał Twój dokument <strong>{{ attachment_name }}</strong> i wymaga zmian.</p>
+
+<h3>Uwagi Opiekuna:</h3>
+<blockquote style="border-left: 4px solid #f59e0b; padding-left: 15px; margin: 15px 0; color: #7c2d12;">
+    {{ comments|safe }}
+</blockquote>
+
+<p>Proszę dokonać zmian i wysłać dokument ponownie.</p>
+
+<p>
+    <a href="{{ dashboard_url }}" style="display:inline-block; background-color:#3b82f6; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">
+        Przejdź do Panelu i Popraw
+    </a>
+</p>
+
+<p>
+    <strong>System Praktyk Zawodowych</strong>
+</p>

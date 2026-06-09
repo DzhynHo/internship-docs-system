@@ -1,0 +1,7 @@
+Sprawozdanie z praktyki zawodowej (załącznik 7)
+
+Instrukcja: pole "sprawozdanie" ograniczone do jednej wypowiedzi (max jedno zdanie).
+Audience: student
+Required: True
+
+Walidacja: proszę użyć funkcji `validate_one_sentence(text)` z `app.models.__init__.py` aby sprawdzić poprawność.

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Praktyka studenta – Panel Opiekuna</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    :root {
+      --navy:#1a2744;--accent:#3b5bdb;--accent-hover:#2f4ac0;--teal:#0d9488;
+      --red:#dc2626;--red-light:#fef2f2;--amber:#d97706;--amber-light:#fffbeb;
+      --green:#16a34a;--green-light:#f0fdf4;--bg:#f0f2f7;--surface:#ffffff;
+      --surface-2:#f8f9fc;--border:#dde1ef;--border-light:#eaecf5;
+      --text:#111827;--text-mid:#374151;--text-muted:#6b7280;
+      --shadow-sm:0 1px 3px rgba(26,39,68,.08);--radius:10px;--radius-sm:6px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+    nav.ans-navbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:68px;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+    nav.ans-navbar a.brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
+    nav.ans-navbar a.brand img{height:44px;background:white;padding:4px;border-radius:4px;}
+    nav.ans-navbar .brand-text{color:#fff;line-height:1.2;}
+    nav.ans-navbar .brand-text>strong{font-size:15px;font-weight:700;display:block;}
+    nav.ans-navbar .brand-text span{font-size:12px;font-weight:300;color:rgba(255,255,255,.65);}
+    nav.ans-navbar>nav{display:flex;align-items:center;gap:4px;}
+    nav.ans-navbar>nav a{color:rgba(255,255,255,.75);text-decoration:none;padding:7px 14px;border-radius:6px;font-size:13.5px;font-weight:500;transition:all .15s;}
+    nav.ans-navbar>nav a:hover{color:#fff;background:rgba(255,255,255,.1);}
+    nav.ans-navbar>nav a.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);}
+    .ans-header-strip{height:4px;background:linear-gradient(90deg,#3b5bdb 0%,#0d9488 100%);}
+    .page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 0;}
+    .page-header-inner{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .page-title-group h1{font-size:20px;font-weight:700;color:var(--navy);}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);margin-top:4px;}
+    .breadcrumb a{color:var(--accent);text-decoration:none;}
+    .breadcrumb a:hover{text-decoration:underline;}
+    .container{max-width:1200px;margin:0 auto;padding:28px 28px 60px;flex:1;}
+    .grid-2{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:20px;}
+    .card-header{padding:14px 20px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;}
+    .card-header h2{font-size:14px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px;}
+    .card-body{padding:20px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .info-item label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);display:block;margin-bottom:3px;}
+    .info-item p{font-size:13.5px;color:var(--text-mid);font-weight:500;}
+    .prog-wrap{margin:16px 0;}
+    .prog-label{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--text-mid);margin-bottom:6px;}
+    .prog-track{height:8px;background:var(--border);border-radius:999px;overflow:hidden;}
+    .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent) 0%,var(--teal) 100%);border-radius:999px;}
+    .doc-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-light);}
+    .doc-item:last-child{border-bottom:none;}
+    .doc-name{font-size:13px;font-weight:600;color:var(--navy);}
+    .doc-time{font-size:11.5px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+    .badge-dot{width:6px;height:6px;border-radius:50%;}
+    .badge-pending{background:var(--amber-light);color:var(--amber);}
+    .badge-pending .badge-dot{background:var(--amber);}
+    .badge-approved{background:var(--green-light);color:var(--green);}
+    .badge-approved .badge-dot{background:var(--green);}
+    .badge-rejected{background:var(--red-light);color:var(--red);}
+    .badge-rejected .badge-dot{background:var(--red);}
+    .badge-draft{background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);}
+    .badge-draft .badge-dot{background:var(--text-muted);}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;text-decoration:none;transition:all .15s;white-space:nowrap;}
+    .btn-primary{background:var(--accent);color:#fff;}
+    .btn-primary:hover{background:var(--accent-hover);}
+    .btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+    .btn-ghost:hover{background:var(--surface-2);}
+    .btn-sm{padding:5px 11px;font-size:12px;}
+    .btn-success{background:var(--green);color:#fff;}
+    .btn-success:hover{background:#15803d;}
+    .btn-danger{background:var(--red);color:#fff;}
+    .btn-danger:hover{background:#b91c1c;}
+    .diary-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .diary-table thead th{background:var(--surface-2);padding:9px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);border-bottom:2px solid var(--border);}
+    .diary-table tbody tr{border-bottom:1px solid var(--border-light);}
+    .diary-table tbody tr:last-child{border-bottom:none;}
+    .diary-table tbody tr{transition:background .15s;}
+    .diary-table tbody tr:hover{background:var(--surface-2);}
+    .diary-table tbody td{padding:11px 14px;vertical-align:top;color:var(--text-mid);}
+    .doc-item{transition:background .15s;}
+    .doc-item:hover{background:var(--surface-2);}
+    .card{transition:box-shadow .2s;}
+    .card:hover{box-shadow:0 4px 16px rgba(26,39,68,.12);}
+    .alert{padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:16px;border-left:4px solid transparent;}
+    .alert-success{background:var(--green-light);border-color:var(--green);color:#14532d;}
+    .alert-error{background:var(--red-light);border-color:var(--red);color:#7f1d1d;}
+    .alert-info{background:#eff3ff;border-color:var(--accent);color:#1e3a8a;}
+    .ans-footer{padding:18px;text-align:center;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);background:var(--surface);}
+    @media(max-width:900px){.grid-2{grid-template-columns:1fr;}.info-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav class="ans-navbar">
+  <a class="brand" href="/auth/dashboard">
+    <img src="/static/img/logo.png" alt="ANS" onerror="this.style.display='none'">
+    <div class="brand-text">
+      <strong>Akademia Nauk Stosowanych</strong>
+      <span>w Elblągu – System Praktyk</span>
+    </div>
+  </a>
+  <nav>
+    <a href="/auth/dashboard">Dashboard</a>
+    <a href="/opiekun/dashboard">Panel opiekuna</a>
+    <a href="/auth/logout" class="btn-logout">Wyloguj</a>
+  </nav>
+</nav>
+<div class="ans-header-strip"></div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title-group">
+      <h1>{{ internship.student.full_name or internship.student.email }} — {{ internship.company_name }}</h1>
+      <div class="breadcrumb">
+        <a href="/auth/dashboard">Dashboard</a> <span>›</span>
+        <a href="/opiekun/dashboard">Panel opiekuna</a> <span>›</span>
+        <span>Szczegóły praktyki</span>
+      </div>
+    </div>
+    <a href="/opiekun/dashboard" class="btn btn-ghost btn-sm">← Powrót</a>
+  </div>
+</div>
+
+<div class="container">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat, msg in messages %}
+      {% set cls = {'success':'alert-success','error':'alert-error'}.get(cat,'alert-info') %}
+      <div class="alert {{ cls }}">{{ msg }}</div>
+    {% endfor %}{% endif %}
+  {% endwith %}
+
+  <div class="grid-2">
+
+    <!-- LEFT: main content -->
+    <div>
+
+      <!-- Internship info -->
+      <div class="card">
+        <div class="card-header">
+          <h2>📋 Informacje o praktyce</h2>
+          <span class="badge" style="background:#eff3ff;color:var(--accent);">
+            <span class="badge-dot" style="background:var(--accent)"></span>
+            {{ internship.status|upper }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item"><label>Student</label><p>{{ internship.student.full_name or '—' }}</p></div>
+            <div class="info-item"><label>Firma</label><p>{{ internship.company_name }}</p></div>
+            <div class="info-item"><label>Adres firmy</label><p>{{ internship.company_address or '—' }}</p></div>
+            <div class="info-item"><label>Email firmy</label><p>{{ internship.company_email or '—' }}</p></div>
+            <div class="info-item"><label>Data rozpoczęcia</label><p>{{ internship.start_date.strftime('%d.%m.%Y') }}</p></div>
+            <div class="info-item"><label>Data zakończenia</label><p>{{ internship.end_date.strftime('%d.%m.%Y') }}</p></div>
+          </div>
+          <div class="prog-wrap">
+            <div class="prog-label">
+              <span>Postęp godzinowy</span>
+              <span>{{ internship.total_hours_worked }}h / {{ internship.total_hours }}h</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:{{ internship.completion_percent }}%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents -->
+      <div class="card">
+        <div class="card-header">
+          <h2>📄 Dokumenty studenta</h2>
+        </div>
+        <div class="card-body" style="padding:0 20px;">
+          {% set all_docs = documents_by_status.draft + documents_by_status.submitted + documents_by_status.pending_review + documents_by_status.approved + documents_by_status.rejected %}
+          {% if all_docs %}
+            {% for doc in all_docs | sort(attribute='updated_at', reverse=True) %}
+            <div class="doc-item">
+              <div>
+                <div class="doc-name">
+                  {{ doc.attachment.name if doc.attachment else 'Dokument #' ~ doc.id }}
+                </div>
+                <div class="doc-time">Aktualizacja: {{ doc.updated_at.strftime('%d.%m.%Y %H:%M') }}</div>
+                {% if doc.comments %}
+                  <div style="font-size:12px;color:var(--text-muted);margin-top:4px;font-style:italic;">"{{ doc.comments[:80] }}{% if doc.comments|length > 80 %}…{% endif %}"</div>
+                {% endif %}
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                {% if doc.status in ['submitted', 'pending_review'] %}
+                  <span class="badge badge-pending"><span class="badge-dot"></span>Oczekuje</span>
+                  <a href="{{ url_for('opiekun.review_document', document_id=doc.id) }}" class="btn btn-primary btn-sm">Przejrzyj</a>
+                {% elif doc.status == 'approved' %}
+                  <span class="badge badge-approved"><span class="badge-dot"></span>Zatwierdzone</span>
+                  <a href="{{ url_for('opiekun.view_document', document_id=doc.id) }}" class="btn btn-ghost btn-sm">Podgląd</a>
+                {% elif doc.status == 'rejected' %}
+                  <span class="badge badge-rejected"><span class="badge-dot"></span>Do poprawy</span>
+                  <a href="{{ url_for('opiekun.view_document', document_id=doc.id) }}" class="btn btn-ghost btn-sm">Podgląd</a>
+                {% else %}
+                  <span class="badge badge-draft"><span class="badge-dot"></span>Szkic</span>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p style="padding:24px 0;text-align:center;color:var(--text-muted);font-size:13px;">Student nie przesłał jeszcze żadnych dokumentów.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Diary entries -->
+      {% if internship.diary_entries %}
+      <div class="card">
+        <div class="card-header">
+          <h2>📖 Dziennik praktyki</h2>
+          <span style="font-size:12px;color:var(--text-muted);">{{ internship.diary_entries|length }} wpisów · {{ total_hours_worked }}h łącznie</span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div style="overflow-x:auto;">
+          <table class="diary-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Data</th>
+                <th>Godziny</th>
+                <th>Opis wykonanych prac</th>
+                <th style="text-align:center;white-space:nowrap;">Nr efektów<br>uczenia się</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entry in internship.diary_entries | sort(attribute='date', reverse=True) | list %}
+              <tr>
+                <td style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--navy);">{{ loop.index }}</td>
+                <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;white-space:nowrap;">{{ entry.date.strftime('%d.%m.%Y') }}</td>
+                <td style="white-space:nowrap;">
+                  <span style="background:#eff3ff;color:var(--accent);border-radius:4px;padding:2px 7px;font-size:12px;font-weight:600;">
+                    {{ entry.start_time.strftime('%H:%M') if entry.start_time else '—' }}–{{ entry.end_time.strftime('%H:%M') if entry.end_time else '—' }}
+                  </span>
+                  <br><span style="font-size:11px;color:var(--text-muted);margin-top:2px;display:inline-block;">{{ entry.hours_worked | round(1) }}h</span>
+                </td>
+                <td style="line-height:1.5;font-size:12.5px;">{{ entry.description }}</td>
+                <td style="text-align:center;">
+                  {% set outcomes = entry.learning_outcome_numbers if entry.learning_outcome_numbers is defined else none %}
+                  {% if outcomes %}
+                    {% for num in outcomes.split(',') %}
+                      <span style="display:inline-block;background:var(--green-light);color:var(--green);border-radius:4px;padding:2px 6px;font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;margin:1px;">{{ num.strip() }}</span>
+                    {% endfor %}
+                  {% else %}
+                    <span style="color:var(--text-light);font-size:12px;">–</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- RIGHT: quick actions -->
+    <div>
+      <div class="card">
+        <div class="card-header"><h2>⚡ Szybkie akcje</h2></div>
+        <div class="card-body">
+          {% set pending = documents_by_status.submitted + documents_by_status.pending_review %}
+          {% if pending %}
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">{{ pending|length }} dokument(ów) czeka na Twoją decyzję.</p>
+            {% for doc in pending %}
+            <a href="{{ url_for('opiekun.review_document', document_id=doc.id) }}"
+               style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--radius-sm);background:#fffbeb;border:1px solid #fde68a;text-decoration:none;margin-bottom:10px;transition:all .15s;"
+               onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fffbeb'">
+              <span style="font-size:18px;">📄</span>
+              <div>
+                <div style="font-weight:700;font-size:13px;color:var(--navy);">{{ doc.attachment.name if doc.attachment else 'Dokument #' ~ doc.id }}</div>
+                <div style="font-size:11.5px;color:var(--amber);">Oczekuje na przegląd</div>
+              </div>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div style="text-align:center;padding:20px 0;color:var(--text-muted);">
+              <div style="font-size:28px;margin-bottom:8px;">✅</div>
+              <p style="font-size:13px;">Wszystkie dokumenty są przejrzane.</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Zał. 4a -->
+      <div class="card">
+        <div class="card-header"><h2>📝 Ocena efektów (Zał. 4a)</h2></div>
+        <div class="card-body">
+          <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px;">
+            Merytoryczna ocena uzyskania efektów uczenia się przez studenta.
+          </p>
+          <a href="{{ url_for('opiekun.attachment_4a', internship_id=internship.id) }}"
+             style="display:block;text-align:center;padding:9px;border-radius:6px;
+             background:#eff3ff;border:1px solid #c7d2fe;color:#3b5bdb;
+             text-decoration:none;font-size:13px;font-weight:600;">
+            Wypełnij / edytuj →
+          </a>
+        </div>
+      </div>
+
+      <!-- Protokół egzaminu -->
+      {% if protocol_doc %}
+      <div class="card">
+        <div class="card-header"><h2>📋 Protokół egzaminu</h2></div>
+        <div class="card-body">
+          {% set pd = protocol_doc.data or {} %}
+          <div style="font-size:13px;margin-bottom:10px;">
+            <span style="color:var(--text-muted);">Ocena końcowa:</span>
+            <strong style="color:var(--navy);margin-left:6px;">{{ pd.get('ocena_koncowa','–') }}</strong>
+          </div>
+          <div style="margin-bottom:14px;">
+            {% if pd.get('zaliczone') == 'tak' %}
+              <span style="color:#16a34a;font-weight:700;">✅ Praktyka zaliczona</span>
+            {% else %}
+              <span style="color:#dc2626;font-weight:700;">❌ Praktyka niezaliczona</span>
+            {% endif %}
+          </div>
+          <a href="{{ url_for('dziekanat.view_protocol', doc_id=protocol_doc.id) }}"
+             class="btn-action" style="background:#f5f3ff;border:1px solid #ddd6fe;
+             color:#7c3aed;display:block;text-align:center;padding:8px;border-radius:6px;
+             text-decoration:none;font-size:13px;font-weight:600;">
+            Pokaż pełny protokół →
+          </a>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Stats mini -->
+      <div class="card">
+        <div class="card-header"><h2>📊 Statystyki</h2></div>
+        <div class="card-body">
+          {% set counts = {'submitted': 0, 'approved': 0, 'rejected': 0, 'draft': 0} %}
+          {% for key, docs in documents_by_status.items() %}
+            {% if key in counts %}{% set _ = counts.update({key: docs|length}) %}{% endif %}
+          {% endfor %}
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span>Oczekujące</span>
+              <span class="badge badge-pending"><span class="badge-dot"></span>{{ (documents_by_status.submitted + documents_by_status.pending_review)|length }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span>Zatwierdzone</span>
+              <span class="badge badge-approved"><span class="badge-dot"></span>{{ documents_by_status.approved|length }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span>Do poprawy</span>
+              <span class="badge badge-rejected"><span class="badge-dot"></span>{{ documents_by_status.rejected|length }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span>Szkice</span>
+              <span class="badge badge-draft"><span class="badge-dot"></span>{{ documents_by_status.draft|length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="ans-footer">&copy; 2026 <strong>Akademia Nauk Stosowanych w Elblągu</strong> – System Obsługi Praktyk</footer>
+
+<script>
+// Animacja paska postępu
+window.addEventListener('DOMContentLoaded', () => {
+  const fill = document.querySelector('.prog-fill');
+  if (fill) {
+    const target = fill.style.width;
+    fill.style.width = '0';
+    fill.style.transition = 'width 0.8s cubic-bezier(.4,0,.2,1)';
+    setTimeout(() => { fill.style.width = target; }, 120);
+  }
+
+  // Podświetl dokumenty oczekujące
+  document.querySelectorAll('.badge-pending').forEach(b => {
+    b.closest('.doc-item')?.style && (b.closest('.doc-item').style.borderLeft = '3px solid var(--amber)');
+  });
+
+  // Licznik kart dokumentów
+  const docCount = document.querySelectorAll('.doc-item').length;
+  const docHeader = document.querySelector('.card-header h2');
+  if (docHeader && docHeader.textContent.includes('Dokumenty') && docCount > 0) {
+    const badge = document.createElement('span');
+    badge.style.cssText = 'font-size:11px;font-weight:600;background:#eff3ff;color:var(--accent);padding:2px 8px;border-radius:20px;margin-left:8px;';
+    badge.textContent = docCount;
+    docHeader.appendChild(badge);
+  }
+});
+</script>
+</body>
+</html>

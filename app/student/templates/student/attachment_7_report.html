@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}Załącznik nr 7 – Sprawozdanie z Praktyki{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Times+New+Roman:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  .form-doc {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 48px 56px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #111;
+  }
+
+  .doc-corner {
+    position: relative;
+  }
+  .doc-corner::before,
+  .doc-corner::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: #333;
+    border-style: solid;
+  }
+  .doc-corner::before { top: -8px; left: -8px; border-width: 2px 0 0 2px; }
+  .doc-corner::after  { bottom: -8px; right: -8px; border-width: 0 2px 2px 0; }
+
+  .attachment-badge {
+    text-align: right;
+    font-size: 13px;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  .institution-header {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .institution-header .name { font-weight: 700; }
+  .institution-header .dept { font-style: italic; }
+
+  .student-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .student-info-table td {
+    padding: 3px 4px;
+    vertical-align: bottom;
+  }
+  .student-info-table .label { white-space: nowrap; padding-right: 6px; }
+  .student-info-table .dotted {
+    border-bottom: 1px solid #333;
+    width: 100%;
+    min-width: 80px;
+    display: inline-block;
+  }
+  .bold-field { font-weight: 700; }
+
+  .doc-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 28px 0 4px;
+  }
+  .doc-subtitle {
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+
+  .company-line {
+    margin-bottom: 28px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 2px;
+  }
+  .company-line span { font-style: italic; }
+
+  .section-title {
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 20px 0 4px;
+  }
+  .section-note {
+    font-style: italic;
+    font-size: 12px;
+    color: #444;
+    margin-bottom: 8px;
+  }
+
+  .doc-textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #333;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 4px 0;
+    background: transparent;
+    outline: none;
+    min-height: 80px;
+    color: #111;
+  }
+  .doc-textarea:focus { background: #f9f9f9; border-bottom-color: #3b5bdb; }
+  .doc-textarea::placeholder { color: #e07070; font-style: italic; font-size: 12px; }
+
+  .char-count {
+    font-size: 11px;
+    color: #888;
+    text-align: right;
+    margin-top: 2px;
+  }
+  .char-count.warn { color: #d97706; }
+  .char-count.over { color: #dc2626; }
+
+  .field-error {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .doc-signature {
+    text-align: right;
+    margin-top: 48px;
+    font-size: 13px;
+    border-top: 1px solid #333;
+    padding-top: 6px;
+    width: 260px;
+    margin-left: auto;
+  }
+  .doc-signature .sig-label { text-align: center; font-size: 12px; }
+
+  .form-actions {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: sans-serif;
+  }
+  .status-draft    { background:#f3f4f6; color:#374151; border:1px solid #d1d5db; }
+  .status-submitted{ background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+  .status-approved { background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+  .status-rejected { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+
+  .back-link {
+    font-family: sans-serif;
+    font-size: 13px;
+    color: #3b5bdb;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .back-link:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('student.view_internship', internship_id=internship.id) }}" class="back-link">
+  <i class="fas fa-arrow-left"></i> Powrót do praktyki
+</a>
+
+{% if document and document.status == 'submitted' %}
+<div class="mb-4 p-3 rounded bg-blue-50 border border-blue-200 text-blue-800 font-sans text-sm">
+  <i class="fas fa-info-circle mr-1"></i>
+  Sprawozdanie zostało wysłane i oczekuje na weryfikację. Możesz je edytować i zapisać jako szkic.
+</div>
+{% endif %}
+
+<form method="POST" novalidate>
+  {{ form.hidden_tag() }}
+
+  <div class="form-doc doc-corner">
+
+    <!-- Załącznik nr -->
+    <div class="attachment-badge">Załącznik nr 7</div>
+
+    <!-- Nagłówek uczelni -->
+    <div class="institution-header">
+      <div class="name">Akademia Nauk Stosowanych<br>w Elblągu</div>
+      <div class="dept">Instytut Informatyki Stosowanej<br><em>im. Krzysztofa Brzeskiego</em></div>
+    </div>
+
+    <!-- Dane studenta -->
+    <table class="student-info-table">
+      <tr>
+        <td class="label">Student:</td>
+        <td style="width:55%">
+          <span class="dotted">{{ current_user.full_name or '' }}</span>
+        </td>
+        <td class="label" style="padding-left:12px">Nr albumu:</td>
+        <td>
+          <span class="dotted" style="min-width:60px">{{ student_index }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Kierunek:</td>
+        <td colspan="3"><span class="bold-field">informatyka</span></td>
+      </tr>
+      <tr>
+        <td class="label">Specjalność:</td>
+        <td colspan="3"><span class="dotted">&nbsp;</span></td>
+      </tr>
+      <tr>
+        <td class="label">Studia:</td>
+        <td colspan="3"><span class="bold-field">inżynierskie stacjonarne</span></td>
+      </tr>
+      <tr>
+        <td class="label">Rok ak.:</td>
+        <td colspan="3"><span class="dotted" style="min-width:140px">&nbsp;</span></td>
+      </tr>
+    </table>
+
+    <!-- Tytuł -->
+    <div class="doc-title">Sprawozdanie studenta</div>
+    <div class="doc-subtitle">z&nbsp;&nbsp;praktyki&nbsp;&nbsp;zawodowej</div>
+
+    <!-- Firma -->
+    <div class="company-line">
+      odbytej w&nbsp; <span>{{ internship.company_name }}</span>
+      &nbsp;&nbsp;({{ internship.start_date.strftime('%d.%m.%Y') }} – {{ internship.end_date.strftime('%d.%m.%Y') }})
+    </div>
+
+    <!-- Sekcja I -->
+    <div class="section-title">I.&nbsp;&nbsp;Charakterystyka miejsca odbywania praktyki</div>
+    <div class="section-note">(Krótki opis instytucji, w której odbywała się praktyka zawodowa)</div>
+
+    {{ form.place_description(class="doc-textarea", id="place_desc") }}
+    <div class="char-count" id="place_count"></div>
+    {% for err in form.place_description.errors %}
+      <div class="field-error">{{ err }}</div>
+    {% endfor %}
+
+    <!-- Sekcja II -->
+    <div class="section-title">II.&nbsp;&nbsp;Opis i analiza wykonywanych prac</div>
+    <div class="section-note">(Syntetyczny opis wykonanych prac)</div>
+    <div class="section-note" style="color:#c00;">
+      /Student opisuje w sposób syntetyczny, jakie zadania wykonywał w trakcie praktyki
+      (jego <u>zdaniem</u> najważniejsze)/
+    </div>
+
+    {{ form.work_description(class="doc-textarea", id="work_desc") }}
+    <div class="char-count" id="work_count"></div>
+    {% for err in form.work_description.errors %}
+      <div class="field-error">{{ err }}</div>
+    {% endfor %}
+
+    <!-- Sekcja III -->
+    <div class="section-title">III.&nbsp;&nbsp;Wiedza i umiejętności uzyskane w trakcie praktyki</div>
+    <div class="section-note">
+      (<em>Samoocena</em> w zakresie nabytych kompetencji oraz osiągniętych efektów uczenia się)
+    </div>
+    <div class="section-note" style="color:#c00;">
+      /Student opisuje, jakie kompetencje nabył w trakcie praktyki zawodowej oraz dokonuje
+      samooceny w zakresie osiągniętych efektów uczenia się. Cytuje po kolei zakładane efekty uczenia
+      się i wykazuje wykonane prace, które prowadziły do ich osiągnięcia/
+    </div>
+
+    {{ form.skills_acquired(class="doc-textarea", id="skills_acq") }}
+    <div class="char-count" id="skills_count"></div>
+    {% for err in form.skills_acquired.errors %}
+      <div class="field-error">{{ err }}</div>
+    {% endfor %}
+
+    <!-- Podpis -->
+    <div class="doc-signature">
+      <div style="min-height:36px"></div>
+      <div class="sig-label">data i podpis studenta</div>
+    </div>
+
+  </div><!-- /.form-doc -->
+
+  <!-- Przyciski akcji -->
+  <div class="form-actions">
+    {% if document %}
+      <span class="status-badge status-{{ document.status }}">
+        {{ document.status.replace('_',' ').upper() }}
+      </span>
+    {% endif %}
+    <button type="submit" name="save" value="1"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-5 rounded-lg text-sm transition">
+      <i class="fas fa-save mr-1"></i> Zapisz szkic
+    </button>
+    <button type="submit" name="submit" value="1"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-lg text-sm transition"
+            onclick="return confirm('Wysłać sprawozdanie do weryfikacji?')">
+      <i class="fas fa-paper-plane mr-1"></i> Wyślij sprawozdanie
+    </button>
+  </div>
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function updateCount(textareaId, counterId, max) {
+    const ta = document.getElementById(textareaId);
+    const ct = document.getElementById(counterId);
+    if (!ta || !ct) return;
+    function refresh() {
+      const len = ta.value.length;
+      ct.textContent = len + ' / ' + max + ' znaków';
+      ct.className = 'char-count' + (len > max ? ' over' : len > max * 0.85 ? ' warn' : '');
+    }
+    ta.addEventListener('input', refresh);
+    refresh();
+  }
+
+  updateCount('place_desc',  'place_count',  2000);
+  updateCount('work_desc',   'work_count',   3000);
+  updateCount('skills_acq',  'skills_count', 3000);
+</script>
+{% endblock %}

@@ -1,0 +1,5 @@
+Karta praktyki zawodowej (załącznik 3)
+
+Instrukcja: karta do wypełnienia podczas praktyk.
+Audience: student, opiekun
+Required: True

@@ -1,0 +1,5 @@
+Program i harmonogram (załącznik 2a)
+
+Instrukcja: szczegółowy harmonogram praktyki.
+Audience: student, opiekun
+Required: True

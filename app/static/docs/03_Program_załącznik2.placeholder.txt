@@ -1,0 +1,5 @@
+Program praktyki zawodowej (załącznik 2)
+
+Instrukcja: formularz programu praktyki.
+Audience: student, opiekun
+Required: True

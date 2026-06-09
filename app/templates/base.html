@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}System Praktyk Zawodowych{% endblock %}</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary: #3b82f6;  /* Blue */
+            --success: #10b981; /* Green */
+            --warning: #f59e0b; /* Amber */
+            --danger: #ef4444;  /* Red */
+            --dark: #1f2937;    /* Dark Gray */
+        }
+        
+        .btn-primary {
+            @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition;
+        }
+        
+        .btn-secondary {
+            @apply bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition;
+        }
+        
+        .btn-success {
+            @apply bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition;
+        }
+        
+        .btn-danger {
+            @apply bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition;
+        }
+        
+        .card {
+            @apply bg-white rounded-lg shadow-md p-6 mb-6;
+        }
+        
+        .card-header {
+            @apply text-xl font-bold text-gray-800 mb-4 pb-4 border-b-2 border-gray-200;
+        }
+        
+        .progress-bar {
+            @apply bg-gray-200 rounded-full h-2.5 dark:bg-gray-700;
+        }
+        
+        .progress-fill {
+            @apply bg-blue-600 h-2.5 rounded-full;
+        }
+        
+        .badge-success {
+            @apply inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold;
+        }
+        
+        .badge-warning {
+            @apply inline-block bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold;
+        }
+        
+        .badge-danger {
+            @apply inline-block bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold;
+        }
+        
+        .badge-info {
+            @apply inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold;
+        }
+        
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900">
+    
+    <!-- Navigation (site header with logo + links) -->
+    <nav class="ans-navbar navbar-logged">
+        <a class="brand" href="{{ url_for('auth.dashboard') if current_user.is_authenticated else url_for('auth.login') }}">
+            <img src="/static/img/logo.png" alt="ANS Logo" onerror="this.style.display='none'">
+            <div class="brand-text">
+                Akademia Nauk Stosowanych
+                <span>w Elblągu – System Praktyk</span>
+            </div>
+        </a>
+        <nav>
+            <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('student.index') }}">Panel studenta</a>
+            <a href="{{ url_for('admin.index') }}">Panel admina</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">Wyloguj</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Zaloguj</a>
+            {% endif %}
+        </nav>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mx-auto px-6 py-4">
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 rounded-lg 
+                        {% if category == 'error' %}
+                            bg-red-100 text-red-700 border-l-4 border-red-500
+                        {% elif category == 'success' %}
+                            bg-green-100 text-green-700 border-l-4 border-green-500
+                        {% elif category == 'warning' %}
+                            bg-yellow-100 text-yellow-700 border-l-4 border-yellow-500
+                        {% else %}
+                            bg-blue-100 text-blue-700 border-l-4 border-blue-500
+                        {% endif %}
+                    ">
+                        <p><strong>{{ category.upper() }}:</strong> {{ message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Main Content -->
+    {% block main %}
+    <main class="container mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    {% endblock %}
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12 py-8">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">O Systemie</h3>
+                    <p class="text-gray-400">System zarządzania praktykami zawodowymi dla Akademii Nauk Stosowanych w Elblągu.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Linki</h3>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><a href="#" class="hover:text-white">O nas</a></li>
+                        <li><a href="#" class="hover:text-white">Kontakt</a></li>
+                        <li><a href="#" class="hover:text-white">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Wsparcie</h3>
+                    <ul class="text-gray-400 space-y-2">
+                        <li>📧 support@uczelnia.pl</li>
+                        <li>📞 +48 123 456 789</li>
+                        <li>🕐 Pon-Pt: 9:00-17:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 Akademia Nauk Stosowanych. Wszystkie prawa zastrzeżone.</p>
+            </div>
+        </div>
+    </footer>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

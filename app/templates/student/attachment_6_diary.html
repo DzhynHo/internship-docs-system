@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Dziennik Praktyki Zawodowej – ANS Elbląg</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:        #1a2744;
+      --accent:      #3b5bdb;
+      --accent-hover:#2f4ac0;
+      --teal:        #0d9488;
+      --red:         #dc2626;
+      --red-light:   #fef2f2;
+      --amber:       #d97706;
+      --amber-light: #fffbeb;
+      --green:       #16a34a;
+      --green-light: #f0fdf4;
+      --bg:          #f0f2f7;
+      --surface:     #ffffff;
+      --surface-2:   #f8f9fc;
+      --border:      #dde1ef;
+      --border-light:#eaecf5;
+      --text:        #111827;
+      --text-mid:    #374151;
+      --text-muted:  #6b7280;
+      --text-light:  #9ca3af;
+      --shadow-sm:   0 1px 3px rgba(26,39,68,.08);
+      --shadow-lg:   0 8px 32px rgba(26,39,68,.13);
+      --radius:      10px;
+      --radius-sm:   6px;
+    }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── Navbar ── */
+    nav.ans-navbar {
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; height: 68px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18); flex-shrink: 0;
+    }
+    nav.ans-navbar a.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    nav.ans-navbar a.brand img { height: 44px; background: white; padding: 4px; border-radius: 4px; }
+    nav.ans-navbar .brand-text { color: #fff; line-height: 1.2; }
+    nav.ans-navbar .brand-text > strong { font-size: 15px; font-weight: 700; display: block; color: #fff; }
+    nav.ans-navbar .brand-text span { font-size: 12px; font-weight: 300; color: rgba(255,255,255,.65); }
+    nav.ans-navbar > nav { display: flex; align-items: center; gap: 4px; }
+    nav.ans-navbar > nav a { color: rgba(255,255,255,.75); text-decoration: none; padding: 7px 14px; border-radius: 6px; font-size: 13.5px; font-weight: 500; transition: all .15s; }
+    nav.ans-navbar > nav a:hover { color: #fff; background: rgba(255,255,255,.1); }
+    nav.ans-navbar > nav a.btn-logout { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; }
+
+    .ans-header-strip { height: 4px; background: linear-gradient(90deg, #3b5bdb 0%, #0d9488 100%); flex-shrink: 0; }
+
+    /* ── Page header ── */
+    .page-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 22px 0; }
+    .page-header-inner { max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .page-title-group h1 { font-size: 22px; font-weight: 700; color: var(--navy); letter-spacing: -.3px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-muted); margin-top: 4px; }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ── Container ── */
+    .diary-container { max-width: 1180px; margin: 0 auto; padding: 24px 24px 48px; flex: 1; }
+
+    /* ── Card ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 24px; }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-header h2 { font-size: 15px; font-weight: 700; color: var(--navy); letter-spacing: -.2px; display: flex; align-items: center; gap: 8px; }
+    .card-body { padding: 24px; }
+
+    /* ── Stats ── */
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-pill { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 12px; }
+    .stat-pill-icon { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .spi-blue  { background: #eff3ff; }
+    .spi-green { background: var(--green-light); }
+    .spi-amber { background: var(--amber-light); }
+    .spi-teal  { background: #f0fdfa; }
+    .stat-pill-val   { font-size: 22px; font-weight: 700; color: var(--navy); line-height: 1; }
+    .stat-pill-label { font-size: 11.5px; color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+
+    /* ── Progress ── */
+    .progress-wrap { margin-bottom: 24px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 600; color: var(--text-mid); margin-bottom: 6px; }
+    .progress-track { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, var(--teal) 100%); border-radius: 999px; transition: width .4s ease; }
+
+    /* ── Form ── */
+    .form-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 16px; }
+    .form-group  { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 12px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: .4px; }
+    label .req { color: var(--red); margin-left: 2px; }
+    input[type=text], input[type=date], input[type=time], textarea, select {
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 9px 12px; font-size: 13.5px; font-family: 'IBM Plex Sans', sans-serif;
+      color: var(--text); background: var(--surface);
+      transition: border .15s, box-shadow .15s; outline: none; width: 100%;
+    }
+    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,91,219,.12); }
+    textarea { resize: vertical; min-height: 90px; }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600; font-family: inherit; cursor: pointer; border: none; text-decoration: none; transition: all .15s; white-space: nowrap; }
+    .btn-primary { background: var(--accent); color: #fff !important; }
+    .btn-primary:hover { background: var(--accent-hover); text-decoration: none; }
+    .btn-ghost { background: transparent; color: var(--text-mid) !important; border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--surface-2); text-decoration: none; }
+    .btn-teal { background: var(--teal); color: #fff !important; }
+    .btn-teal:hover { background: #0b7a70; text-decoration: none; }
+    .btn-danger-ghost { background: transparent; color: var(--red) !important; border: 1px solid #fca5a5; }
+    .btn-danger-ghost:hover { background: var(--red-light); }
+    .btn-sm { padding: 5px 12px !important; font-size: 12px !important; }
+
+    /* ── Alerts ── */
+    .alert { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 16px; border-left: 4px solid transparent; display: flex; align-items: flex-start; gap: 8px; }
+    .alert-success { background: var(--green-light); border-color: var(--green); color: #14532d; }
+    .alert-error   { background: var(--red-light);   border-color: var(--red);   color: #7f1d1d; }
+    .alert-info    { background: #eff3ff; border-color: var(--accent); color: #1e3a8a; }
+    .alert-warning { background: var(--amber-light); border-color: var(--amber); color: #78350f; }
+
+    /* ── Diary table ── */
+    .diary-table-wrap { overflow-x: auto; border-radius: 0 0 var(--radius) var(--radius); }
+    .diary-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .diary-table thead th { background: var(--surface-2); padding: 11px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--text-muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+    .diary-table thead th.col-day   { width: 70px; text-align: center; }
+    .diary-table thead th.col-date  { width: 120px; }
+    .diary-table thead th.col-hours { width: 130px; }
+    .diary-table thead th.col-eff   { width: 110px; text-align: center; }
+    .diary-table thead th.col-act   { width: 80px; text-align: center; }
+    .diary-table tbody tr { border-bottom: 1px solid var(--border-light); transition: background .1s; }
+    .diary-table tbody tr:last-child { border-bottom: none; }
+    .diary-table tbody tr:hover { background: var(--surface-2); }
+    .diary-table tbody td { padding: 12px 14px; vertical-align: top; color: var(--text-mid); }
+    .diary-table tbody td.col-day { text-align: center; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px; color: var(--navy); }
+    .diary-table tbody td.col-date { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--text-muted); }
+    .diary-table tbody td.col-hours { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; white-space: nowrap; }
+    .diary-table tbody td.col-desc { line-height: 1.55; font-size: 13px; max-width: 420px; }
+    .diary-table tbody td.col-eff  { text-align: center; }
+    .diary-table tbody td.col-act  { text-align: center; }
+    .hours-badge { display: inline-flex; align-items: center; gap: 4px; background: #eff3ff; color: var(--accent); border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+    .effect-chip { display: inline-block; background: var(--green-light); color: var(--green); border-radius: 6px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+    .today-row { background: #fffbeb !important; }
+    .today-row td { border-left: 3px solid var(--amber); }
+    .empty-diary { text-align: center; padding: 52px 20px; color: var(--text-muted); }
+    .empty-diary .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+    /* ── Modal ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: var(--surface); border-radius: var(--radius); padding: 28px; max-width: 400px; width: 90%; box-shadow: var(--shadow-lg); }
+    .modal-box h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .modal-box p  { font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.55; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    footer { padding: 16px; text-align: center; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border); background: var(--surface); margin-top: auto; }
+
+    @media (max-width: 900px) { .stats-bar { grid-template-columns: 1fr 1fr; } .form-grid-4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .stats-bar { grid-template-columns: 1fr; } .form-grid-4 { grid-template-columns: 1fr; } .diary-container { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<nav class="ans-navbar">
+  <a class="brand" href="/auth/dashboard">
+    <img src="/static/img/logo.png" alt="ANS Logo" onerror="this.style.display='none'">
+    <div class="brand-text">
+      <strong>Akademia Nauk Stosowanych</strong>
+      <span>w Elblągu – System Praktyk</span>
+    </div>
+  </a>
+  <nav>
+    <a href="/auth/dashboard">Dashboard</a>
+    <a href="/student/">Panel studenta</a>
+    <a href="/auth/regulamin">Regulamin PZ</a>
+    <a href="/auth/logout" class="btn-logout">Wyloguj</a>
+  </nav>
+</nav>
+<div class="ans-header-strip"></div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title-group">
+      <h1>Dziennik Praktyki Zawodowej</h1>
+      <div class="breadcrumb">
+        <a href="/auth/dashboard">Dashboard</a>
+        <span>›</span>
+        <a href="/student/">Panel studenta</a>
+        <span>›</span>
+        <span>Załącznik nr 6 – Dziennik</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="{{ url_for('student.diary_pdf', internship_id=internship.id) }}"
+         class="btn btn-teal" target="_blank">
+        📄 <span>Pobierz PDF</span>
+      </a>
+      <a href="{{ url_for('student.index') }}" class="btn btn-ghost">
+        ← Powrót
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="diary-container">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        {% set cls = {'success':'alert-success','error':'alert-error','warning':'alert-warning','info':'alert-info'}.get(cat,'alert-info') %}
+        <div class="alert {{ cls }}">
+          {{ '✅' if cat=='success' else ('❌' if cat=='error' else ('⚠️' if cat=='warning' else 'ℹ️')) }}
+          {{ msg }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% set total_days  = entries | length %}
+  {% set total_hours = entries | sum(attribute='hours') if entries else 0 %}
+  {% set required_days = 120 %}
+  {% set pct = ((total_days / required_days) * 100) | round(1) %}
+  {% set display_pct = pct if pct < 100 else 100 %}
+
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <div class="stat-pill-icon spi-blue">📅</div>
+      <div>
+        <div class="stat-pill-val">{{ total_days }}</div>
+        <div class="stat-pill-label">Dni przepracowane</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-icon spi-teal">⏱️</div>
+      <div>
+        <div class="stat-pill-val">{{ total_hours }}h</div>
+        <div class="stat-pill-label">Łączna liczba godzin</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-icon spi-amber">🎯</div>
+      <div>
+        <div class="stat-pill-val">{{ required_days - total_days if required_days > total_days else 0 }}</div>
+        <div class="stat-pill-label">Dni pozostało</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-icon spi-green">📊</div>
+      <div>
+        <div class="stat-pill-val">{{ pct }}%</div>
+        <div class="stat-pill-label">Ukończono</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Postęp praktyki</span>
+      <span>{{ total_days }} / {{ required_days }} dni roboczych</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" data-pct="{{ display_pct }}"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>➕ Dodaj wpis do dziennika</h2>
+      <span style="font-size:12px;color:var(--text-muted);">
+        Dzień {{ total_days + 1 }} z {{ required_days }}
+      </span>
+    </div>
+    <div class="card-body">
+      <form method="POST"
+            action="{{ url_for('student.add_diary_entry_page', internship_id=internship.id) }}"
+            id="diaryForm">
+        {{ form.hidden_tag() if form.hidden_tag is defined else '' }}
+
+        <div class="form-grid-4" style="margin-bottom:16px;">
+          <div class="form-group">
+            <label>Data <span class="req">*</span></label>
+            <input type="date" name="date" value="{{ today }}" required max="{{ today }}">
+            <div class="form-hint">Maksymalnie dzisiaj</div>
+          </div>
+          <div class="form-group">
+            <label>Godzina od <span class="req">*</span></label>
+            <input type="time" name="start_time" id="start_time" value="08:00" required>
+          </div>
+          <div class="form-group">
+            <label>Godzina do <span class="req">*</span></label>
+            <input type="time" name="end_time" id="end_time" value="16:00" required>
+          </div>
+          <div class="form-group">
+            <label>Nr efektów uczenia się</label>
+            <input type="text" name="learning_outcome_numbers" placeholder="np. E1, E2, E5">
+            <div class="form-hint">Oddziel przecinkami</div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px;">
+          <label>Opis wykonanych prac <span class="req">*</span></label>
+          <textarea name="description" id="description" rows="4"
+                    placeholder="Opisz szczegółowo wykonane czynności, zdobyte umiejętności i efekty uczenia się..."
+                    required maxlength="2000"></textarea>
+          <div class="form-hint" id="charCount" style="text-align:right;">0 / 2000 znaków</div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <button type="submit" class="btn btn-primary">✅ Dodaj wpis</button>
+          <button type="reset" class="btn btn-ghost" onclick="resetForm()">🔄 Wyczyść</button>
+          <span style="font-size:12px;color:var(--text-muted);margin-left:auto;">
+            Każdy wpis zatwierdza zakładowy opiekun praktyki (ZOPZ)
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>📖 Wpisy w dzienniku</h2>
+      {% if entries %}
+      <span style="font-size:12.5px;color:var(--text-muted);">
+        Łącznie: <strong>{{ entries | length }}</strong> wpisów
+      </span>
+      {% endif %}
+    </div>
+
+    {% if entries %}
+    <div class="diary-table-wrap">
+      <table class="diary-table">
+        <thead>
+          <tr>
+            <th class="col-day">Dzień</th>
+            <th class="col-date">Data</th>
+            <th class="col-hours">Godziny</th>
+            <th class="col-desc">Opis wykonanych prac</th>
+            <th class="col-eff">Nr efektów<br>uczenia się</th>
+            <th class="col-act">Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in entries %}
+          {% set is_today = (entry.date | string) == today %}
+          <tr class="{{ 'today-row' if is_today else '' }}" id="row-{{ entry.id }}">
+            <td class="col-day">{{ loop.index }}</td>
+            <td class="col-date">
+              {{ entry.date.strftime('%d.%m.%Y') if entry.date else '–' }}
+              {% if is_today %}
+                <br><span style="font-size:10px;color:var(--amber);font-weight:700;">DZISIAJ</span>
+              {% endif %}
+            </td>
+            <td class="col-hours">
+              <span class="hours-badge">
+                {{ entry.start_time.strftime('%H:%M') if entry.start_time else '–' }}
+                –
+                {{ entry.end_time.strftime('%H:%M') if entry.end_time else '–' }}
+              </span>
+              <br>
+              <span style="font-size:11px;color:var(--text-muted);margin-top:3px;display:inline-block;">
+                {{ entry.hours }}h
+              </span>
+            </td>
+            <td class="col-desc">{{ entry.description }}</td>
+            <td class="col-eff">
+              {% if entry.learning_outcome_numbers %}
+                {% for num in entry.learning_outcome_numbers.split(',') %}
+                  <span class="effect-chip">{{ num.strip() }}</span>
+                {% endfor %}
+              {% else %}
+                <span style="color:var(--text-light);font-size:12px;">–</span>
+              {% endif %}
+            </td>
+            <td class="col-act">
+              {% if is_today %}
+              <button class="btn btn-danger-ghost btn-sm"
+                      onclick="confirmDelete('{{ entry.id }}')">
+                🗑
+              </button>
+              {% else %}
+              <span style="color:var(--text-light);font-size:11px;">–</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-diary">
+      <div class="empty-icon">📝</div>
+      <p><strong>Brak wpisów w dzienniku</strong></p>
+      <p style="margin-top:6px;font-size:13px;">Dodaj pierwszy wpis używając formularza powyżej.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="alert alert-info">
+    <span>📌</span>
+    <div>
+      <strong>Instrukcja wypełniania dziennika</strong><br>
+      <span style="font-size:12.5px;">
+        Wpisy powinny zawierać opis wykonywanych prac, z których powinno wynikać jakie umiejętności student nabywa.
+        Podaj numer/numery efektów uczenia się, do których osiągnięcia prowadzą wykonywane prace.
+        Każdą stronę dziennika potwierdza zakładowy opiekun praktyki (ZOPZ).
+        Możesz usunąć tylko wpis dodany dzisiaj.
+      </span>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <h3>Usuń wpis z dziennika</h3>
+    <p>Czy na pewno chcesz usunąć ten wpis? Tej operacji nie można cofnąć.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Anuluj</button>
+      <button class="btn btn-danger-ghost" id="confirmDeleteBtn">Usuń wpis</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 <strong>Akademia Nauk Stosowanych w Elblągu</strong> – System Obsługi Praktyk
+</footer>
+
+<script>
+// Pasek postępu
+const pf = document.getElementById('progressFill');
+if (pf) pf.style.width = (pf.dataset.pct || 0) + '%';
+
+const desc    = document.getElementById('description');
+const counter = document.getElementById('charCount');
+if (desc && counter) {
+  desc.addEventListener('input', () => {
+    const n = desc.value.length;
+    counter.textContent = `${n} / 2000 znaków`;
+    counter.style.color = n > 1800 ? 'var(--red)' : 'var(--text-muted)';
+  });
+}
+
+document.getElementById('diaryForm').addEventListener('submit', function(e) {
+  const s = document.getElementById('start_time').value;
+  const t = document.getElementById('end_time').value;
+  if (s && t && s >= t) {
+    alert('Godzina zakończenia musi być późniejsza niż godzina rozpoczęcia.');
+    e.preventDefault();
+  }
+});
+
+function resetForm() {
+  document.getElementById('start_time').value = '08:00';
+  document.getElementById('end_time').value   = '16:00';
+  if (counter) counter.textContent = '0 / 2000 znaków';
+}
+
+let deleteEntryId = null;
+
+function confirmDelete(entryId) {
+  deleteEntryId = entryId;
+  document.getElementById('deleteModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+  deleteEntryId = null;
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+  if (!deleteEntryId) return;
+  fetch(`/student/internship/{{ internship.id }}/diary/${deleteEntryId}/delete`, {
+    method: 'DELETE',
+    headers: { 'X-CSRFToken': '{{ csrf_token() if csrf_token is defined else "" }}' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      const row = document.getElementById(`row-${deleteEntryId}`);
+      if (row) row.remove();
+      closeModal();
+      setTimeout(() => location.reload(), 300);
+    } else {
+      alert(data.error || 'Nie można usunąć wpisu.');
+      closeModal();
+    }
+  })
+  .catch(() => { alert('Błąd połączenia.'); closeModal(); });
+});
+
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>

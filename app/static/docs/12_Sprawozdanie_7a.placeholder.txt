@@ -1,0 +1,5 @@
+Sprawozdanie - studia niestacjonarne (załącznik 7a)
+
+Instrukcja: formularz alternatywny dla studentów niestacjonarnych/pracujących.
+Audience: student
+Required: Conditional

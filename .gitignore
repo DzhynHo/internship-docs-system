@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Flask / SQLite database (nie wrzucamy bazy na GitHub!)
+instance/
+*.db
+*.sqlite3
+
+# Secrets
+.env
+.env.local
+*.secret
+
+# WeasyPrint / PDF cache
+.weasyprint/
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,5 @@
+Porozumienie (załącznik 1)
+
+Instrukcja: formularz do wypełnienia przez studenta i instytucję przyjmującą.
+Audience: student, opiekun
+Required: True
